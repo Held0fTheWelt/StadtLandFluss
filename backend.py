@@ -1,8 +1,8 @@
 import random
 import time
+from wikipedia import *
 #from ui_ux import show_highscore
 
-TEST_DATA = ["Stuttgart", "Spanien", "Seine"]
 
 def get_random_character():
     """Finde einen beliebigen Buchstaben im Alphabet"""
@@ -47,21 +47,8 @@ def get_result(dauer, stadt, land, fluss):
     if check_answer(fluss, question_types[2]):
         result += 5
 
-
     print(f"Du {result} Punkte!")
     return result
-
-
-question_types = ["city", "country", "lake"]
-
-def check_answer(value, question_type):
-    if question_type == "city" and value == TEST_DATA[0]:
-        return True
-    if question_type == "country" and value == TEST_DATA[1]:
-        return True
-    if question_type == "lake" and value == TEST_DATA[2]:
-        return True
-    return False
 
 
 def update_highscore(result):
