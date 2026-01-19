@@ -18,13 +18,30 @@ NEGATIVE = "\033[7m"
 CROSSED = "\033[9m"
 END = "\033[0m"
 
-def greeting():
-    print("🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️")
+"""def greeting():
+
     print(BOLD + "Willkommen zum Stadt-Land-Fluss-Spiel" + END)
     print("🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️")
     start = input("➡️ Drücke " + YELLOW +  "'Enter' " + END + "zum starten ...")
     if start == "":
+        menu()"""
+
+#alternativ
+def greeting():
+    #print("🕹️"️ * 20)
+    print(r"""
+     ____  _            _ _     _                    _   _____ _
+    / ___|| |_ __ _  __| | |_  | |    __ _ _ __   __| | |  ___| |_   _ ___ ___
+    \___ \| __/ _` |/ _` | __| | |   / _` | '_ \ / _` | | |_  | | | | / __/ __|
+     ___) | || (_| | (_| | |_  | |__| (_| | | | | (_| | |  _| | | |_| \__ \__ \
+    |____/ \__\__,_|\__,_|\__| |_____\__,_|_| |_|\__,_| |_|   |_|\__,_|___/___/
+    Presentation of RIVER-PIRATES
+        """)
+    #print("🕹️"️ * 20)
+    start = input("➡️ Drücke " + YELLOW +  "'Enter' " + END + "zum starten ...")
+    if start == "":
         menu()
+
 
 def show_rules():
     """
