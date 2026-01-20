@@ -1,5 +1,7 @@
 import random
 import time
+import ui_ux
+
 from wikipedia import *
 #from ui_ux import show_highscore
 
@@ -9,23 +11,25 @@ def get_random_character():
     random_upper_letter = chr(random.randint(ord('A'), ord('Z')))
     return random_upper_letter
 
-def play_round():
-    startzeit = time.time()  # startzeit
-    stadt = input("Stadt: ")
-    land = input("Land: ")
-    fluss = input("Fluss: ")
-    endzeit = time.time()  # endzeit
-    dauer = endzeit - startzeit
-    return [dauer, stadt, land, fluss]
+
 
 def play():
     """ Spielt eine Runde Stadt Land Fluss und ruft die Auswertung auf"""
 
+
+
+
     # Runde startet - Startzeit wird gemessen
 
-    print("Lets play *SLF 3000*")
-
-    dauer, stadt, land, fluss = play_round()
+    print("Lets play *SLF 3000*\n")
+    random_character = get_random_character()
+    print(f"Der aktuelle Buchstabe ist {random_character}\n")
+    startzeit = time.time()  # startzeit
+    stadt = ui_ux.get_input("Stadt")
+    land = ui_ux.get_input("Land")
+    fluss = ui_ux.get_input("Fluss")
+    endzeit = time.time()  # endzeit
+    dauer = endzeit - startzeit
 
     print("Fertig!")
     print(f"Du hast {dauer:.2f} Sekunden gebraucht.")
@@ -53,4 +57,11 @@ def get_result(dauer, stadt, land, fluss):
 
 def update_highscore(result):
     """Zeigt den neuen Highscore an"""
+
+    # ist highscore ein neuer bester score ?
+        # name abfragen
+        # highscore eintragen
+
+    # daten speichern ?? Wenn ja, bei show_highscore daten laden
+
     pass

@@ -18,29 +18,10 @@ NEGATIVE = "\033[7m"
 CROSSED = "\033[9m"
 END = "\033[0m"
 
-"""def greeting():
+def get_input(term):
+    return input(f"{term}: ")
 
-    print(BOLD + "Willkommen zum Stadt-Land-Fluss-Spiel" + END)
-    print("🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️🕹️")
-    start = input("➡️ Drücke " + YELLOW +  "'Enter' " + END + "zum starten ...")
-    if start == "":
-        menu()"""
-
-#alternativ
 def greeting():
-#     #print("🕹️"️ * 20)
-#     print(r"""
-#      ____  _            _ _     _                    _   _____ _
-#     / ___|| |_ __ _  __| | |_  | |    __ _ _ __   __| | |  ___| |_   _ ___ ___
-#     \___ \| __/ _` |/ _` | __| | |   / _` | '_ \ / _` | | |_  | | | | / __/ __|
-#      ___) | || (_| | (_| | |_  | |__| (_| | | | | (_| | |  _| | | |_| \__ \__ \
-#     |____/ \__\__,_|\__,_|\__| |_____\__,_|_| |_|\__,_| |_|   |_|\__,_|___/___/
-#     Presentation of RIVER-PIRATES
-#         """)
-#     print("🕹️"️ * 20)
-#     start = input("➡️ Drücke " + YELLOW +  "'Enter' " + END + "zum starten ...")
-#     if start == "":
-#         menu()
     print(
         f"""
     {RED} ____  _            _ _   {END}  {GREEN}_                    _ {END}{BLUE}  _____ _{END}
@@ -48,11 +29,13 @@ def greeting():
     {RED}\\___ \\| __/ _` |/ _` | __| {END}{GREEN}| |   / _` | '_ \\ / _` |{END}{BLUE} | |_  | | | | / __/ __|{END}
     {RED} ___) | || (_| | (_| | |_  {END}{GREEN}| |__| (_| | | | | (_| |{END}{BLUE} |  _| | | |_| \\__ \\__ \\{END}
     {RED}|____/ \\__\\__,_|\\__,_|\\__| {END}{GREEN}|_____\\__,_|_| |_|\\__,_|{END}{BLUE} |_|   |_|\\__,_|___/___/{END}
-    
-    {FAINT}Presentation of {BOLD}{BLUE}RIVER{END}{FAINT}-{BOLD}{RED}PIRATES{END}
+
+    {LIGHT_GREEN}RIVER{END}-{LIGHT_GREEN}PIRATES{END} Entertainment®
     """
     )
-
+    start = input("➡️  Drücke " + YELLOW + "'Enter' " + END + "zum starten ...")
+    if start == "":
+        menu()
 
 
 def show_rules():
@@ -81,12 +64,14 @@ def show_rules():
         menu()
 
 def menu():
+    print()
     user_choice = int(input(
         GREEN + "1." + END + "PLAY\n" +
         GREEN + "2." + END + "HIGHSCORE\n" +
         GREEN + "3." + END + "HELP\n" +
         GREEN + "4." + END + "EXIT\n"
     ))
+    print()
     if user_choice == 1:
         play()
     elif user_choice == 2:

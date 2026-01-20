@@ -1,3 +1,5 @@
+import requests, json
+
 from http.client import responses
 
 question_types = ["city", "country", "lake"]
@@ -13,7 +15,6 @@ def check_answer(value, question_type):
 
 TEST_DATA = ["Stuttgart", "Spanien", "Seine"]
 
-import requests
 def if_exists_in_wiki(term):
     url = "https://de.wikipedia.org/w/api.php"
     parameter = {
@@ -32,6 +33,8 @@ def get_wikipedia_summary(term):
     if response.status_code == 200:
         return response.json()
     return None
+
+
 
 
 """
