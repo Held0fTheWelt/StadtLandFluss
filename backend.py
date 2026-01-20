@@ -2,10 +2,10 @@ import random
 import time
 import ui_ux
 import datetime
-
 from wiki import *
 
-Highscore = []
+TIME_FOR_BONUS = 30
+highscore = {}
 
 def get_random_character():
     """Finde einen beliebigen Buchstaben im Alphabet"""
@@ -13,12 +13,8 @@ def get_random_character():
     return random_upper_letter
 
 
-
 def play():
     """ Spielt eine Runde Stadt Land Fluss und ruft die Auswertung auf"""
-
-    # Runde startet - Startzeit wird gemessen
-
     print("Lets play *SLF 3000*\n")
     random_character = get_random_character()
     print(f"Der aktuelle Buchstabe ist {random_character}\n")
@@ -28,25 +24,22 @@ def play():
     fluss = ui_ux.get_input("Fluss")
     endzeit = time.time()  # endzeit
     dauer = endzeit - startzeit
-
     print("Fertig!")
     print(f"Du hast {dauer:.2f} Sekunden gebraucht.")
-
     # Bewerte Result
-    result = get_result(dauer, stadt, land, fluss, random_character)
+    result = get_result(dauer, stadt, land, fluss)
     update_highscore(result)
    # show_highscore()
-TIME_FOR_BONUS = 30
 
 
-def get_result(dauer, stadt, land, fluss, current_character):
+def get_result(dauer, stadt, land, fluss):
     """ Berechnet das Ergebnis und zeigt es an """
     result = 0
-    if check_answer(stadt, question_types[0], current_character):
+    if check_answer(stadt, question_types[0]):
         result += 5
-    if check_answer(land, question_types[1], current_character):
+    if check_answer(land, question_types[1]):
         result += 5
-    if check_answer(fluss, question_types[2], current_character):
+    if check_answer(fluss, question_types[2]):
         result += 5
     player_name = get_player_name()
     print(f"{player_name}, du hast {result} Punkte!")
@@ -54,17 +47,21 @@ def get_result(dauer, stadt, land, fluss, current_character):
 
 
 def get_player_name():
-    """Erfragt den Namen der spielenden Person"""
+    """Erfragt den Namen der Person"""
     player_name = (input("Gib bitte deinen Namen ein! "))
     return player_name
 
+
 def update_highscore(result):
     """Zeigt den neuen Highscore an"""
-
+    new_score = get_result()
+    name_of_player = get_player_name()
+    highscore["Name"] = name_of_player
+    highscore["Zeit"] = new_score
+    highscore["Datum"] = datetime.datetime.now()
+    highscore["Punkte"] = 0
     # ist highscore ein neuer bester score ?
-        # name abfragen
-      #  result["name"] = "Frank"
-       # result["datum"] = datetime.datetime.now()
+
         # highscore eintragen
         #Highscore.append(result)
     # daten speichern ?? Wenn ja, bei show_highscore daten laden

@@ -1,4 +1,6 @@
-from backend import play
+from backend import play, highscore
+
+highscore
 
 """ ANSI color codes """
 RED = "\033[0;31m"
@@ -90,5 +92,5 @@ def exit_game():
 
 
 def show_highscore():
-    pass
+    print(highscore)
 
