@@ -2,9 +2,9 @@ import random
 import time
 import ui_ux
 
-from wikipedia import *
-#from ui_ux import show_highscore
+from wiki import *
 
+Highscore = []
 
 def get_random_character():
     """Finde einen beliebigen Buchstaben im Alphabet"""
@@ -53,15 +53,30 @@ def get_result(dauer, stadt, land, fluss):
 
     print(f"Du {result} Punkte!")
     return result
-
+import datetime
 
 def update_highscore(result):
     """Zeigt den neuen Highscore an"""
 
     # ist highscore ein neuer bester score ?
         # name abfragen
+      #  result["name"] = "Frank"
+       # result["datum"] = datetime.datetime.now()
         # highscore eintragen
-
+        #Highscore.append(result)
     # daten speichern ?? Wenn ja, bei show_highscore daten laden
-
+    #[
+    #    {
+    #       "name" : "Thomas",
+    #       "punkte" : 25,
+    #       "zeit" : 12.4,
+    #       "datum": 20.01.2026
+    #    },
+    #    {
+    #       "name" : "Dieter",
+    #       "punkte" : 20,
+    #       "zeit" : 15.4,
+    #       "datum": 20.01.2026
+    #    }
+    #]
     pass

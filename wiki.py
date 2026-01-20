@@ -16,6 +16,9 @@ def check_answer(value, question_type):
 TEST_DATA = ["Stuttgart", "Spanien", "Seine"]
 
 def if_exists_in_wiki(term):
+    """
+    Es prüft, ob ein Wort auf Wikipedia existiert.
+    """
     url = "https://de.wikipedia.org/w/api.php"
     parameter = {
         "action": "opensearch",
@@ -23,7 +26,7 @@ def if_exists_in_wiki(term):
         "limit": 1,
         "format": "json"
     }
-    response = requests.get(url, params= parameter)
+    response = requests.get(url, params = parameter)
     data = response.json()
     return len(data[1]) > 0
 
@@ -33,7 +36,6 @@ def get_wikipedia_summary(term):
     if response.status_code == 200:
         return response.json()
     return None
-
 
 
 
