@@ -1,4 +1,5 @@
 import json
+from color import*
 
 DATA = 'daten.json'  # Datei für Highscores
 

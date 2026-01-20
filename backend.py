@@ -18,7 +18,7 @@ def get_random_character():
 def play():
     """ Spielt eine Runde Stadt Land Fluss und ruft die Auswertung auf"""
     random_character = get_random_character()
-    print(f"Der aktuelle Buchstabe ist {random_character}\n")
+    print(f"Der aktuelle Buchstabe ist: {BLUE}{random_character}{END}\n")
 
     startzeit = time.time()  # startzeit
 

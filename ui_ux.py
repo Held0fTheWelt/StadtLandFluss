@@ -1,23 +1,6 @@
+from color import*
+
 highscore = {}  # Für lokale Anzeige (falls nötig)
-
-""" ANSI color codes """
-RED = "\033[0;31m"
-GREEN = "\033[0;32m"
-BLUE = "\033[0;34m"
-PURPLE = "\033[0;35m"
-CYAN = "\033[0;36m"
-LIGHT_RED = "\033[1;31m"
-LIGHT_GREEN = "\033[1;32m"
-YELLOW = "\033[1;33m"
-BOLD = "\033[1m"
-FAINT = "\033[2m"
-ITALIC = "\033[3m"
-UNDERLINE = "\033[4m"
-BLINK = "\033[5m"
-NEGATIVE = "\033[7m"
-CROSSED = "\033[9m"
-END = "\033[0m"
-
 
 def lets_play():
     print(f"Lets play: {RED}STADT{END}-{GREEN}LAND{END}-{BLUE}FLUSS{END}")
@@ -61,6 +44,7 @@ def show_rules():
         + "- VIEL SPASS!"
     )
     print("  🌇🌍🌊")
+    print()
     input("➡️  Drücke " + YELLOW + "'Enter' " + END + "zum starten ...")
 
 
@@ -94,13 +78,13 @@ def menu():
 def exit_game():
     print(
         fr"""
-    {GREEN}  ____     ___     ___    ____    ____    __   __  _____ {END}
-    {GREEN} / ___|   / _ \   / _ \  |  _ \  | __ )   \ \ / / | ____| {END}
-    {GREEN}| |  _   | | | | | | | | | | | | | |_ \    \ V /  |  _|   {END}
-    {GREEN}| |_| |  | |_| | | |_| | | |_| | | |_) |    | |   | |___  {END}
-    {GREEN} \____|   \___/   \___/  |____/  |____/     |_|   |_____| {END}
+    {GREEN}  ____    ___     ___    ____    ____   __   __  _____ {END}
+    {GREEN} / ___|  / _ \   / _ \  |  _ \  | __ )  \ \ / / | ____| {END}
+    {GREEN}| |  _  | | | | | | | | | | | | | |_ \   \ V /  |  _|   {END}
+    {GREEN}| |_| | | |_| | | |_| | | |_| | | |_) |   | |   | |___  {END}
+    {GREEN} \____|  \___/   \___/  |____/  |____/    |_|   |_____| {END}
     """)
-    print("     Danke fürs Spielen! Bis zum nächsten Mal👋")
+    print(f"   {YELLOW} Danke fürs Spielen!{END} Bis zum nächsten Mal & liebe Grüße von den {LIGHT_GREEN}FLUSS-PIRATEN {END}👋")
 
 
 def show_highscore():
@@ -137,22 +121,25 @@ def show_highscore():
         f"{BLUE} |____/ \\____\\___/|_| \\_\\_____|{END}"
         f"{YELLOW} ★★★{END}"
     )
-
+    print()
+    indent = " " * 15
     if not highscores:
         print("Noch keine Highscores vorhanden.")
     else:
         # Sortieren nach Punkte, absteigend
         sorted_scores = sorted(highscores, key=lambda x: x["Punkte"], reverse=True)
 
-        print("╔══════════════════════════════╗")
-        print("║ #  Name     Punkte   Zeit    ║")
-        print("╠══════════════════════════════╣")
+        print(f"{indent}╔══════════════════════════════╗")
+        print(f"{indent}║ #  Name     Punkte   Zeit    ║")
+        print(f"{indent}╠══════════════════════════════╣")
 
         for i, entry in enumerate(sorted_scores[:10], start=1):
             zeit_str = f"{entry['Zeit']:.2f}s"
-            print(f"║ {i:<2} {entry['Name']:<8} {entry['Punkte']:>6}   {zeit_str:>6}  ║")
+            print(f"{indent}║ {i:<2} {entry['Name']:<8} {entry['Punkte']:>6}   {zeit_str:>6}  ║")
 
-        print("╚══════════════════════════════╝")
+        for _ in range(max(0, 3 - len(highscores))):
+            print(f"{indent}║                              ║")
+        print(f"{indent}╚══════════════════════════════╝")
         print("")
 
     input("➡️  Drücke " + YELLOW + "'Enter' " + END + "um zum Menü zu gelangen ...")

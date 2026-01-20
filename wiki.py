@@ -202,12 +202,12 @@ def check_answer(value, question_type, current_character):
     """
     # ist etwas eingegeben?
     if not value:
-        print("Keine Eingabe!")
+        print(f'{RED}"{question_type.capitalize()}"{End} hat keine Eingabe!')
         return False
 
     # ist der erste buchstabe gleich dem aktuellen buchstaben
     if current_character.lower() != value[0].lower():
-        print(f"Das ist nicht der Anfangsbuchstabe, der benötigt wird. Das Wort sollte mit {current_character} beginnen.")
+        print(f"Das ist nicht der Anfangsbuchstabe, der benötigt wird. Das Wort sollte mit {RED}{current_character}{END} beginnen.")
         return False
 
     # gibt es einen wikipedia eintrag, zu der aktuellen eingabe
