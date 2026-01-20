@@ -2,8 +2,9 @@ import random
 import time
 import ui_ux
 import datetime
-from wiki import *
+import data_transfer
 
+from wiki import *  # check_answer, question_types etc.
 
 TIME_FOR_BONUS = 30
 
@@ -16,68 +17,70 @@ def get_random_character():
 
 def play():
     """ Spielt eine Runde Stadt Land Fluss und ruft die Auswertung auf"""
-    print("Lets play *SLF 3000*\n")
-    random_character = "d" #get_random_character()
+    random_character = get_random_character()
     print(f"Der aktuelle Buchstabe ist {random_character}\n")
+
     startzeit = time.time()  # startzeit
+
+    # Eingaben vom User
     stadt = ui_ux.get_input("Stadt")
     land = ui_ux.get_input("Land")
     fluss = ui_ux.get_input("Fluss")
+
     endzeit = time.time()  # endzeit
+
     result = {}
     result["Zeit"] = endzeit - startzeit
-    print("Fertig!")
-    print(f"Du hast {result["Zeit"]:.2f} Sekunden gebraucht.")
-    # Bewerte Result
+    print("\nGutes Spiel! Danke!")
+    print(f'Du hast {result["Zeit"]:.2f} Sekunden gebraucht.\n') # f-string korrigiert
+
+    # Auswertung
     get_result(result, stadt, land, fluss, random_character)
+
+    # Name des Spielers abfragen
     result["Name"] = get_player_name()
-    print(f"{result["Name"]}, du hast {result["Punkte"]} Punkte!")
+    result["ABC"] = random_character
+
+    print(f'{result["Name"]}, du hast {result["Punkte"]} Punkte!')
+
+    # Highscore aktualisieren
     update_highscore(result)
 
+    return result
 
 
 def get_result(result, stadt, land, fluss, buchstabe):
     """ Berechnet das Ergebnis und zeigt es an """
     result["Punkte"] = 0
-    if check_answer(stadt, question_types[0], buchstabe):
+
+    # check_answer für jede Kategorie
+    if check_answer(stadt, "stadt", buchstabe):
         result["Punkte"] += 5
-    if check_answer(land, question_types[1], buchstabe):
+    if check_answer(land, "land", buchstabe):
         result["Punkte"] += 5
-    if check_answer(fluss, question_types[2], buchstabe):
+    if check_answer(fluss, "fluss", buchstabe):
         result["Punkte"] += 5
 
 
 def get_player_name():
     """Erfragt den Namen der Person"""
-    player_name = (input("Gib bitte deinen Namen ein! "))
+    player_name = input("Gib bitte deinen Namen ein! ")
     return player_name
 
 
 def update_highscore(result):
     """Zeigt den neuen Highscore an"""
-    ui_ux.highscore[result["Name"]] = result["Punkte"]
+    try:
+        highscore = data_transfer.json_load(data_transfer.DATA)
+    except (FileNotFoundError, json.JSONDecodeError):
+        highscore = []
 
-"""
-{
-    "Yves" : { "Name": "Yves", "Punkte": 5, "Zeit": 12.4 },
-}
-"""
-    # ist highscore ein neuer bester score ?
+    # Neues Ergebnis hinzufügen
+    highscore.append({
+        "Name": result["Name"],
+        "Punkte": result["Punkte"],
+        "Zeit": result["Zeit"],
+    })
 
-        # highscore eintragen
-        #Highscore.append(result)
-    # daten speichern ?? Wenn ja, bei show_highscore daten laden
-    #[
-    #    {
-    #       "name" : "Thomas",
-    #       "punkte" : 25,
-    #       "zeit" : 12.4,
-    #       "datum": 20.01.2026
-    #    },
-    #    {
-    #       "name" : "Dieter",
-    #       "punkte" : 20,
-    #       "zeit" : 15.4,
-    #       "datum": 20.01.2026
-    #    }
-    #]
+    # Speichern
+    data_transfer.json_save(data_transfer.DATA, highscore)
