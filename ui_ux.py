@@ -52,10 +52,10 @@ def menu():
     print()
     try:
         user_choice = int(input(
-            "\t" + GREEN + "1." + END + " PLAY\n"
-            "\t" + GREEN + "2." + END + " HIGHSCORE\n"
-            "\t" + GREEN + "3." + END + " HELP\n"
-            "\t" + GREEN + "4." + END + " EXIT\n"
+            "\t" + GREEN + "1." + END + " 🕹️ PLAY\n"
+            "\t" + GREEN + "2." + END + " 🏆 HIGHSCORE\n"
+            "\t" + GREEN + "3." + END + " 🛟 HELP\n"
+            "\t" + GREEN + "4." + END + " ❌ EXIT\n"
         ))
     except ValueError:
         print("Ungültige Eingabe. Bitte Zahl 1-4 eingeben.")

@@ -1,7 +1,6 @@
 import random
 import time
 import ui_ux
-import datetime
 import data_transfer
 
 from wiki import *  # check_answer, question_types etc.
@@ -41,7 +40,7 @@ def play():
     result["Name"] = get_player_name()
     result["ABC"] = random_character
 
-    print(f'{result["Name"]}, du hast {result["Punkte"]} Punkte!')
+    print(f'{result["Name"]}, du hast {YELLOW}{result["Punkte"]}{END} Punkte!')
 
     # Highscore aktualisieren
     update_highscore(result)
@@ -83,4 +82,4 @@ def update_highscore(result):
     })
 
     # Speichern
-    data_transfer.json_save(data_transfer.DATA, highscore)
+    # data_transfer.json_save(data_transfer.DATA, highscore)

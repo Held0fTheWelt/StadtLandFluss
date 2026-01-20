@@ -133,7 +133,7 @@ def getresult_for_wikipedia_term(term):
         "User-Agent": "StadtLandFlussGame/1.0 (https://example.com)"
     }
 
-    response = requests.get(url, params=params, headers=headers)
+    response = requests.get(url, params = params, headers = headers)
     if response.status_code != 200:
         return create_not_found_result(term_original)
 
