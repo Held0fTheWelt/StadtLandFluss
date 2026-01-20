@@ -1,6 +1,6 @@
 import wikipedia
 import requests
-from color import*
+from color import *
 #wikipedia.set_lang("de")
 
 question_types = ["stadt", "land", "fluss"]
@@ -148,7 +148,7 @@ def getresult_for_wikipedia_term(term):
     # Kategorien extrahieren
     categories = []
     if "categories" in page:
-        categories = [cat["title"].replace("Kategorie:", "")
+        categories = [cat["title"].replace("Kategorie: ", "")
                       for cat in page["categories"]]
 
     # Kategorisierung durchführen
@@ -202,7 +202,7 @@ def check_answer(value, question_type, current_character):
     """
     # ist etwas eingegeben?
     if not value:
-        print(f'{RED}"{question_type.capitalize()}"{End} hat keine Eingabe!')
+        print(f'{RED}"{question_type.capitalize()}"{END} hat keine Eingabe!')
         return False
 
     # ist der erste buchstabe gleich dem aktuellen buchstaben
