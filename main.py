@@ -4,7 +4,7 @@ from ui_ux import *
 
 def main():
     """ Main function"""
-    # Am Ende ggf. Highscore speichern (falls noch nötig)
+    # Am Start ggf. Highscore laden
     try:
         highscore = data_transfer.json_load(data_transfer.DATA)
     except:
@@ -19,8 +19,7 @@ def main():
             exit_game()
             break
 
-    # Hinweis: das Ergebnis wird bereits in backend.update_highscore gespeichert
-    # Hier also nur Sicherung
+    # Am Ende ggf. Highscore speichern (falls noch nötig)
     data_transfer.json_save(data_transfer.DATA, highscore)
 
 

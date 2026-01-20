@@ -31,3 +31,61 @@ def json_load(DATA):
     except Exception as e:
         print(f"Fehler beim Laden der Datei {DATA}: {e}")
         return []
+
+"""
+{
+  "round": 1,
+  "letter": "B",
+
+  "answers": {
+    "Levent": {
+      "Stadt": "Berlin",
+      "Land": "Belgien",
+      "Fluss": "Bosphorus"
+    },
+    "Anna": {
+      "Stadt": "Berlin",
+      "Land": "Brasilien",
+      "Fluss": "Brahmaputra"
+    }
+  },
+
+  "validation": {
+    "Levent": {
+      "Stadt": true,
+      "Land": true,
+      "Fluss": true
+    },
+    "Anna": {
+      "Stadt": true,
+      "Land": true,
+      "Fluss": true
+    }
+  },
+
+  "duplicates": {
+    "Stadt": {
+      "Berlin": ["Levent", "Anna"]
+    },
+    "Land": {},
+    "Fluss": {}
+  },
+
+  "points": {
+    "Levent": {
+      "Stadt": 5,
+      "Land": 10,
+      "Fluss": 10,
+      "total": 25
+    },
+    "Anna": {
+      "Stadt": 5,
+      "Land": 10,
+      "Fluss": 10,
+      "total": 25
+    }
+  }
+}
+
+
+"""
