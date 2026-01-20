@@ -1,6 +1,6 @@
-from backend import play, highscore
+from backend import play
 
-highscore
+highscore = {}
 
 """ ANSI color codes """
 RED = "\033[0;31m"
@@ -57,11 +57,11 @@ def show_rules():
     + "- Jeder Spieler spielt 1 Runde basierend auf 3 Buchstaben\n"
     + "- Es muss zu jedem Buchstaben eine Stadt, ein Land und ein Fluss angegeben werden\n"
     + "- Wenn dir nichts einfällt, überspringe eine beliebige Frage mit der Enter-Taste\n"
-    + "- Du hast 1 Minute Zeit für deine 3 zufällig generierten Buchstaben\n"
     + "- VIEL SPASS!"
     )
     print("🌇🌍🌊")
-    back = input("🥳 Drücke " + YELLOW + "'Enter' " + END + "zum Menü zu gelangen ...")
+    print()
+    back = input("➡️  Drücke " + YELLOW + "'Enter' " + END + "zum starten ...")
     if back == "":
         menu()
 
@@ -92,5 +92,6 @@ def exit_game():
 
 
 def show_highscore():
-    return highscore
+    for entry in highscore:
+        print(entry["Zeit"])
 

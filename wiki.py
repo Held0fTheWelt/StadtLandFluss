@@ -40,9 +40,9 @@ def if_exists_in_wiki(term: str) -> bool:
 
     response = requests.get(url, params=parameter, headers=headers)
 
-    print("Status:", response.status_code)
-    print("URL:", response.url)
-    print("Text:", response.text[:200])
+#    print("Status:", response.status_code)
+#    print("URL:", response.url)
+#    print("Text:", response.text[:200])
 
     response.raise_for_status()  # wirft Fehler, falls HTTP-Fehler
     data = response.json()
