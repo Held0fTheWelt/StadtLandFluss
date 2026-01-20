@@ -92,5 +92,5 @@ def exit_game():
 
 
 def show_highscore():
-    print(highscore)
+    return highscore
 

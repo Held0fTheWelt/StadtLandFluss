@@ -3,6 +3,7 @@ import time
 import ui_ux
 import datetime
 from wiki import *
+from ui_ux import show_highscore
 
 TIME_FOR_BONUS = 30
 highscore = {}
@@ -29,7 +30,7 @@ def play():
     # Bewerte Result
     result = get_result(dauer, stadt, land, fluss)
     update_highscore(result)
-   # show_highscore()
+    ui_ux.highscore()
 
 
 def get_result(dauer, stadt, land, fluss):
