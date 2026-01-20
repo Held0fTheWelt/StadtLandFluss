@@ -1,6 +1,6 @@
 import json
 
-data='daten.json'
+DATA='daten.json'
 
 def json_save(DATA, data):
     """

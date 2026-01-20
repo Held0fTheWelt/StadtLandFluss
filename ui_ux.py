@@ -66,12 +66,13 @@ def show_rules():
 def menu():
     print()
     user_choice = int(input(
-        GREEN + "1." + END + "PLAY\n" +
-        GREEN + "2." + END + "HIGHSCORE\n" +
-        GREEN + "3." + END + "HELP\n" +
-        GREEN + "4." + END + "EXIT\n"
+        "\t" + GREEN + "1." + END + " PLAY\n"
+        "\t" + GREEN + "2." + END + " HIGHSCORE\n"
+        "\t" + GREEN + "3." + END + " HELP\n"
+        "\t" + GREEN + "4." + END + " EXIT\n"
     ))
     print()
+
     if user_choice == 1:
         play()
     elif user_choice == 2:
@@ -79,11 +80,12 @@ def menu():
     elif user_choice == 3:
         show_rules()
     elif user_choice == 4:
-        exit_game()
         return False
     return True
 
+
 def exit_game():
+    print()
     print("Danke fürs Spielen! Bis zum nächsten Mal👋")
 
 

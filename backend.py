@@ -1,6 +1,7 @@
 import random
 import time
 import ui_ux
+import datetime
 
 from wiki import *
 
@@ -15,9 +16,6 @@ def get_random_character():
 
 def play():
     """ Spielt eine Runde Stadt Land Fluss und ruft die Auswertung auf"""
-
-
-
 
     # Runde startet - Startzeit wird gemessen
 
@@ -35,25 +33,30 @@ def play():
     print(f"Du hast {dauer:.2f} Sekunden gebraucht.")
 
     # Bewerte Result
-    result = get_result(dauer, stadt, land, fluss)
+    result = get_result(dauer, stadt, land, fluss, random_character)
     update_highscore(result)
    # show_highscore()
 TIME_FOR_BONUS = 30
 
 
-def get_result(dauer, stadt, land, fluss):
-    """ Berechnet das Ergebnis """
+def get_result(dauer, stadt, land, fluss, current_character):
+    """ Berechnet das Ergebnis und zeigt es an """
     result = 0
-    if check_answer(stadt, question_types[0]):
+    if check_answer(stadt, question_types[0], current_character):
         result += 5
-    if check_answer(land, question_types[1]):
+    if check_answer(land, question_types[1], current_character):
         result += 5
-    if check_answer(fluss, question_types[2]):
+    if check_answer(fluss, question_types[2], current_character):
         result += 5
-
-    print(f"Du {result} Punkte!")
+    player_name = get_player_name()
+    print(f"{player_name}, du hast {result} Punkte!")
     return result
-import datetime
+
+
+def get_player_name():
+    """Erfragt den Namen der spielenden Person"""
+    player_name = (input("Gib bitte deinen Namen ein! "))
+    return player_name
 
 def update_highscore(result):
     """Zeigt den neuen Highscore an"""
