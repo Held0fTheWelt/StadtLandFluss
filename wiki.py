@@ -1,18 +1,27 @@
 import wikipedia
+import requests
+
 wikipedia.set_lang("de")
 
-question_types = ["city", "country", "lake"]
+question_types = ["stadt", "land", "fluss"]
+
 
 def check_answer(value, question_type, current_character):
-    if question_type == "city" and value == TEST_DATA[0]:
-        return True
-    if question_type == "country" and value == TEST_DATA[1]:
-        return True
-    if question_type == "lake" and value == TEST_DATA[2]:
-        return True
-    return False
+    # ist der erste buchstabe gleich dem aktuellen buchstaben
+    if current_character.lower() != value[0].lower():
+        return False
+    # gibt es einen wikipedia eintrag, zu der aktuellen eingabe
+    if not if_exists_in_wiki(value):
+        return False
+    summary = get_wikipedia_summary(value)
+    # wenn question_type nicht in der summary, dann return false
+
+
+    return True
+
 
 TEST_DATA = ["Stuttgart", "Spanien", "Seine"]
+
 
 def get_wikipedia_summary(term):
     term = term.strip().replace(" ", "_")
@@ -58,7 +67,11 @@ def if_exists_in_wiki(term: str) -> bool:
         "namespace": 0,
         "format": "json"
     }
-    response = requests.get(url, params=parameter)
+    headers = {
+        "User-Agent": "StadtLandFlussGame/1.0 (https://example.com)"
+    }
+
+    response = requests.get(url, params=parameter, headers=headers)
 
     print("Status:", response.status_code)
     print("URL:", response.url)
@@ -100,5 +113,8 @@ def category_detection(summary):
     "Land": false,
     "Fluss": false
   }
+}
+{
+
 }
 """
