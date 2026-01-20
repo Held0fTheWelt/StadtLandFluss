@@ -5,8 +5,7 @@ def main():
     greeting()
 
     while True:
-        runagain = menu()
-        if not runagain:
+        if not menu():
             break
 
 
