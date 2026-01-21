@@ -35,7 +35,7 @@ def change_volume():
     print(f"{indent}║        LAUTSTÄRKE EINSTELLEN         ║")
     print(f"{indent}╠══════════════════════════════════════╣")
     print(f"{indent}║  Erlaubter Bereich:                  ║")
-    print(f"{indent}║  0 = Stumm                         ║")
+    print(f"{indent}║  0 = Stumm                           ║")
     print(f"{indent}║  100 = Maximale Lautstärke           ║")
     print(f"{indent}╚══════════════════════════════════════╝")
     print()
