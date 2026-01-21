@@ -32,6 +32,18 @@ def json_load(DATA):
         print(f"Fehler beim Laden der Datei {DATA}: {e}")
         return []
 
+def reset_highscores():
+    """
+    Überschreibt die Highscore-Datei mit einer leeren Liste,
+    um alle Daten zu löschen.
+    """
+    try:
+        with open(DATA, "w", encoding="utf-8") as f:
+            json.dump([], f, ensure_ascii=False, indent=4)
+        print(f"{GREEN}Alle Highscores wurden erfolgreich gelöscht!{END}")
+    except Exception as e:
+        print(f"{RED}Fehler beim Zurücksetzen der Highscores: {e}{END}")
+
 """
 {
   "round": 1,

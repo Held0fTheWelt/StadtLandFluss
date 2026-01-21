@@ -19,7 +19,8 @@ def show_settings():
         print(f"{indent}╠════════╬════════════════════════════════════╣")
         print(f"{indent}║   1    ║ Lautstärke anpassen                ║")
         print(f"{indent}║   2    ║ Logs aktivieren / deaktivieren     ║")
-        print(f"{indent}║   3    ║ Zurück zum Hauptmenü               ║")
+        print(f"{indent}║   3    ║ Highscores löschen (Reset)         ║")  # Neu
+        print(f"{indent}║   4    ║ Zurück zum Hauptmenü               ║")
         print(f"{indent}╚════════╩════════════════════════════════════╝")
         print()
 
@@ -32,6 +33,11 @@ def show_settings():
                 backend.change_active_logging()
                 break
             elif setting == 3:
+                # Sicherheitsabfrage
+                confirm = input("Bist du sicher, dass du alle Highscores löschen willst? (j/n): ").lower()
+                if confirm == 'j':
+                    data_transfer.reset_highscores()
+            elif setting == 4:
                 print("Kehre zurück.")
                 break
             else:
