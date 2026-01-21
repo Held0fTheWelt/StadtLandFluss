@@ -1,28 +1,47 @@
-import winsound
+import pygame
 
-def play_menu_music():
+# Automatische Initialisierung beim Import
+pygame.mixer.init()
+
+def play_menu_music(volume=0.02):
     """
-    Importiert die Eingangsmusik fürs Spiel
+    Spielt die Menümusik ab
+
+    Args:
+        volume: Lautstärke von 0.0 (stumm) bis 1.0 (max)
     """
-    winsound.PlaySound("sounds/price_is_right.wav", winsound.SND_FILENAME)
-    pass
+    pygame.mixer.music.load("sounds/price_is_right.wav")
+    pygame.mixer.music.set_volume(volume)
+    pygame.mixer.music.play(-1)  # -1 = Endlosschleife
+
+
+def play_game_music(volume=0.3):
+    """Spielt die Spielmusik ab"""
+    pygame.mixer.music.load("sounds/thinking.wav")
+    pygame.mixer.music.set_volume(volume)
+    pygame.mixer.music.play(-1)
+
 
 def stop_music():
-    """
-    Stoppt die Musik
-    """
-    winsound.PlaySound(None, winsound.SND_PURGE)
-    pass
+    """Stoppt die Musik"""
+    pygame.mixer.music.stop()
 
-def play_game_music():
-    """
-    Importiert einen Soundeffekt fürs Spiel
-    """
-    winsound.PlaySound("sounds/thinking.wav", winsound.SND_FILENAME)
-    pass
 
-def stop_game_music():
+def set_volume(volume):
     """
-    Stoppt einen Soundeffekt fürs Spiel
+    Ändert die Lautstärke während der Wiedergabe
+
+    Args:
+        volume: Wert zwischen 0.0 und 1.0
     """
-    pass
+    pygame.mixer.music.set_volume(volume)
+
+
+def pause_music():
+    """Pausiert die Musik"""
+    pygame.mixer.music.pause()
+
+
+def unpause_music():
+    """Setzt pausierte Musik fort"""
+    pygame.mixer.music.unpause()

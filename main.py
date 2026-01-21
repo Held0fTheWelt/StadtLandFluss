@@ -13,14 +13,16 @@ def main():
         highscore = []
 
     # Menü Musik abspielen
-    #soundmodul.play_menu_music()
+    soundmodul.play_menu_music()
 
     greeting()
 
     # Hauptmenü-Schleife
     while True:
 
-        if not menu():  # menu() gibt False zurück bei Exit
+        if not menu():
+            # menu() gibt False zurück bei Exit
+            soundmodul.stop_music()
             exit_game()
             break
 

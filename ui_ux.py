@@ -1,6 +1,7 @@
 from color import *
 import data_transfer
 import backend
+import soundmodul
 
 highscore = {}  # Für lokale Anzeige (falls nötig)
 
@@ -31,7 +32,7 @@ def greeting():
     {LIGHT_GREEN}RIVER{END}-{LIGHT_GREEN}PIRATES{END} Entertainment®
     """
     )
-    input("➡️  Drücke " + YELLOW + "'Enter' " + END + "zum starten ...")
+    input("➡️  Drücke " + YELLOW + "'Enter' " + END + "zum Starten ...")
 
 
 def show_rules():
@@ -46,7 +47,7 @@ def show_rules():
     """
     print("  🌇🌍🌊")
     print(
-        YELLOW + "  Achtung Spieler, die festgelegten Regeln sind wie folgt:\n" + END
+        YELLOW + "  Achtung Spieler! Die festgelegten Regeln sind wie folgt:\n" + END
         + "- Jeder Spieler spielt 1 Runde basierend auf 1 Buchstaben\n"
         + "- Es muss zu jedem Buchstaben eine Stadt, ein Land und ein Fluss angegeben werden\n"
         + "- Wenn dir nichts einfällt, überspringe eine beliebige Frage mit der Enter-Taste\n"
@@ -76,12 +77,17 @@ def menu():
 
     if user_choice == 1:
         # Play erst importieren, wenn benötigt → verhindert zirkuläre Abhängigkeit
+        soundmodul.stop_music()
+        soundmodul.play_game_music()
         backend.play()
+        soundmodul.stop_music()
+        soundmodul.play_menu_music()
     elif user_choice == 2:
         show_highscore()
     elif user_choice == 3:
         show_rules()
     elif user_choice == 4:
+        soundmodul.stop_music()
         return False
     return True
 
@@ -103,7 +109,7 @@ def exit_game():
 
 def show_highscore():
     """
-    Zeigt die alten und den neuen Highscores an.
+    Zeigt die alten und den neuen Highscores an - mit Medaillen in der Tabelle!
     """
     highscores = data_transfer.json_load(data_transfer.DATA)
 
@@ -134,24 +140,45 @@ def show_highscore():
         f"{YELLOW} ★★★{END}"
     )
     print()
-    indent = " " * 15
+    indent = " " * 11
+
     if not highscores:
-        print("Noch keine Highscores vorhanden.")
+        print(f"{indent}Noch keine Highscores vorhanden.")
     else:
         # Sortieren nach Punkte, absteigend
         sorted_scores = sorted(highscores, key=lambda x: x["Punkte"], reverse=True)
 
-        print(f"{indent}╔══════════════════════════════╗")
-        print(f"{indent}║ #  Name     Punkte   Zeit    ║")
-        print(f"{indent}╠══════════════════════════════╣")
+        # Header (breitere #-Spalte für Medaillen)
+        print(f"{indent}╔════════╦════════════╦═════════╦═════════╗")
+        print(f"{indent}║   #    ║    Name    ║  Punkte ║   Zeit  ║")
+        print(f"{indent}╠════════╬════════════╬═════════╬═════════╣")
 
+        # Top 10 Einträge mit Medaillen IN der Tabelle
         for i, entry in enumerate(sorted_scores[:10], start=1):
-            zeit_str = f"{entry['Zeit']:.2f}s"
-            print(f"{indent}║ {i:<2} {entry['Name']:<8} {entry['Punkte']:>6}   {zeit_str:>6}  ║")
+            # Name auf maximal 10 Zeichen begrenzen
+            name = entry.get('Name', 'Unbekannt')
+            if len(name) > 10:
+                name = name[:9] + '…'
 
-        for _ in range(max(0, 3 - len(highscores))):
-            print(f"{indent}║                              ║")
-        print(f"{indent}╚══════════════════════════════╝")
-        print("")
+            # Punkte und Zeit formatieren
+            punkte = entry.get('Punkte', 0)
+            zeit = entry.get('Zeit', 0)
+
+            # Rank-String mit Medaille (rechtsbündig, 6 Zeichen breit)
+            if i == 1:
+                rank = f"🥇 {i:>2} "  # Emoji + Leerzeichen + Nummer rechtsbündig
+            elif i == 2:
+                rank = f"🥈 {i:>2} "
+            elif i == 3:
+                rank = f"🥉 {i:>2} "
+            else:
+                rank = f"   {i:>2} "  # 3 Leerzeichen + Nummer rechtsbündig
+
+            # Zeile ausgeben
+            print(f"{indent}║ {rank} ║ {name:<10} ║ {punkte:>7.2f} ║ {zeit:>6.2f}s ║")
+
+        # Footer
+        print(f"{indent}╚════════╩════════════╩═════════╩═════════╝")
+        print()
 
     input("➡️  Drücke " + YELLOW + "'Enter' " + END + "um zum Menü zu gelangen ...")
