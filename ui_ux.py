@@ -10,10 +10,16 @@ def lets_play():
 
 
 def get_input(term):
+    """
+    Gibt den vom Benutzer eingebenen Inhalt zurück
+    """
     return input(f"{term}: ")
 
 
 def greeting():
+    """
+    Zeigt den Startbildschirm des Spiels an.
+    """
     print(
         f"""
     {RED} ____  _            _ _   {END}  {GREEN}_                    _ {END}{BLUE}  _____ _{END}
@@ -30,13 +36,13 @@ def greeting():
 
 def show_rules():
     """
-    Der Spielablauf funktioniert wie folgt:
-    Jeder Spieler spielt 1 Runde basierend auf 3 Buchstaben.
-    Das System generiert diese zufällig und fragt den Nutzer zu
-    jedem Buchstaben nach einer passenden Stadt, einem Land und
+    Überblick über den Spieleablauf.Der Spielablauf funktioniert wie folgt:
+    Jeder Spieler spielt 1 Runde basierend auf 1 Buchstaben.
+    Das System generiert diesen zufällig und fragt den Nutzer / die Nutzerin
+    nach einer passenden Stadt, einem Land und
     einem Fluss beginnend mit diesem Buchstaben.
-    Wenn der User mit einem Buchstaben fertig ist (entweder duch eingabe oder
-    "weiter" mit Enter-taste) wird der nächste Buchstabe generiert.
+    Wenn der User mit einem Buchstaben fertig ist (entweder duch Eingabe oder
+    "weiter" mit Enter-taste) wird die Eingabe über Wikipedia auf Richtigkeit geprüft und zurückgegeben.
     """
     print("  🌇🌍🌊")
     print(
@@ -52,6 +58,9 @@ def show_rules():
 
 
 def menu():
+    """
+    Zeigt das Auswahlmenü an und führt zu den ausgewhählten Menüinhalten.
+    """
     print()
     try:
         user_choice = int(input(
@@ -78,6 +87,9 @@ def menu():
 
 
 def exit_game():
+    """
+    Zeigt den Verabschiedungsbildschirm an
+    """
     print(
         fr"""
     {GREEN}  ____    ___     ___    ____    ____   __   __  _____ {END}
@@ -91,10 +103,8 @@ def exit_game():
 
 def show_highscore():
     """
-    Zeigt die Highscores an.
-    Lädt sie aus daten.json, falls vorhanden.
+    Zeigt die alten und den neuen Highscores an.
     """
-
     highscores = data_transfer.json_load(data_transfer.DATA)
 
     print(

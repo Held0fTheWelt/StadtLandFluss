@@ -10,13 +10,17 @@ TIME_FOR_BONUS = 30
 
 
 def get_random_character():
-    """Finde einen beliebigen Buchstaben im Alphabet"""
+    """
+    Finde einen beliebigen Buchstaben im Alphabet
+    """
     random_upper_letter = chr(random.randint(ord('A'), ord('Z')))
     return random_upper_letter
 
 
 def play():
-    """ Spielt eine Runde Stadt Land Fluss und ruft die Auswertung auf"""
+    """
+    Spielt eine Runde Stadt Land Fluss und ruft die Auswertung auf
+    """
     random_character = get_random_character()
     print(f"Der aktuelle Buchstabe ist: {BLUE}{random_character}{END}\n")
 
@@ -78,7 +82,9 @@ def play():
 
 
 def get_result(result, stadt, land, fluss, buchstabe):
-    """ Berechnet das Ergebnis und zeigt es an """
+    """
+    Berechnet das Ergebnis und zeigt es an.
+    """
     result["Punkte"] = 0
 
     # check_answer für jede Kategorie (bereits mit Error-Handling in wiki.py)
@@ -110,7 +116,9 @@ def get_result(result, stadt, land, fluss, buchstabe):
 
 
 def get_player_name():
-    """Erfragt den Namen der Person"""
+    """
+    Erfragt den Namen der Person.
+    """
     while True:
         try:
             player_name = input(f"\nGib bitte deinen {YELLOW}Namen{END} ein! ")
@@ -137,7 +145,9 @@ def get_player_name():
 
 
 def update_highscore(result):
-    """Zeigt den neuen Highscore an und speichert ihn"""
+    """
+    Zeigt den neuen Highscore an und speichert ihn.
+    """
     try:
         highscore = data_transfer.json_load(data_transfer.DATA)
     except FileNotFoundError:

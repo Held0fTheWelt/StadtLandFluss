@@ -4,8 +4,9 @@ from ui_ux import *
 import soundmodul
 
 def main():
-    """ Main function"""
-    # Am Start ggf. Highscore laden
+    """
+    Hauptfunktion für Spieleablauf
+    """
     try:
         highscore = data_transfer.json_load(data_transfer.DATA)
     except:
@@ -14,7 +15,6 @@ def main():
     # Menü Musik abspielen
     #soundmodul.play_menu_music()
 
-    # Begrüßung
     greeting()
 
     # Hauptmenü-Schleife
