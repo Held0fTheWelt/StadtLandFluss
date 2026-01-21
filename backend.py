@@ -35,24 +35,25 @@ def change_volume():
     print(f"{indent}║        LAUTSTÄRKE EINSTELLEN         ║")
     print(f"{indent}╠══════════════════════════════════════╣")
     print(f"{indent}║  Erlaubter Bereich:                  ║")
-    print(f"{indent}║  0.0 = Stumm                         ║")
-    print(f"{indent}║  1.0 = Maximale Lautstärke           ║")
+    print(f"{indent}║  0 = Stumm                         ║")
+    print(f"{indent}║  100 = Maximale Lautstärke           ║")
     print(f"{indent}╚══════════════════════════════════════╝")
     print()
 
     while True:
         try:
-            value = input("Gebe die Lautstärke als Wert zwischen 0.0 und 1.0 an: ")
-            volume = float(value)
+            value = input("Gebe die Lautstärke als Wert zwischen 0 und 100 an: ")
+            volume = int(value)
 
-            if 0.0 <= volume <= 1.0:
-                settings.volume = volume
+            if 0 <= volume <= 100:
+                settings.volume = volume * 0.0006
+                print(f"Volume: {settings.volume}")
                 pygame.mixer.music.set_volume(settings.volume)
                 break
             else:
-                print("Fehler: Bitte einen Wert zwischen 0.0 und 1.0 eingeben.")
+                print("Fehler: Bitte einen Wert zwischen 0 und 100 eingeben.")
         except ValueError:
-            print("Fehler: Bitte eine Zahl eingeben (z.B. 0.5).")
+            print("Fehler: Bitte eine Zahl eingeben (z.B. 50).")
 
 
 def get_random_character():
