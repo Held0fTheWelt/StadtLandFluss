@@ -84,10 +84,14 @@ def show_rules():
     print("  🌇🌍🌊")
     print(
         YELLOW + "  Achtung Spieler! Die festgelegten Regeln sind wie folgt:\n" + END
-        + "- Jeder Spieler spielt 1 Runde basierend auf 1 Buchstaben\n"
-        + "- Es muss zu jedem Buchstaben eine Stadt, ein Land und ein Fluss angegeben werden\n"
+        + "- Jede spielende Person spielt 1 Runde basierend auf einen Buchstaben\n"
+        + "- Es muss zum Buchstaben jeweils eine Stadt, ein Land und ein Fluss eingegeben werden\n"
         + "- Wenn dir nichts einfällt, überspringe eine beliebige Frage mit der Enter-Taste\n"
-        + "- VIEL SPASS!"
+        + "- Füge nach dem Spiel deinen Namen hinzu\n"
+        + "- Sollten deine erreichten Punkte innerhalb der Top 10 liegen, wirst du dich unter deinen Namen in den Highscores wieder finden\n"
+        + "- Du kannst das Spiel allein oder abwechselnd mit Anderen spielen und so eure Highscores verbessern\n"
+        + "- Ein Retro-Game neu interpretiert – altbekannter Spaß, frisch programmiert\n"
+        + "- VIEL SPASS!\n"
     )
     print("  🌇🌍🌊")
     print()
