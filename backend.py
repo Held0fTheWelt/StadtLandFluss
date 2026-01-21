@@ -31,7 +31,7 @@ def play():
     result = {}
     result["Zeit"] = endzeit - startzeit
     print("\nGutes Spiel! Danke!")
-    print(f'Du hast {result["Zeit"]:.2f} Sekunden gebraucht.\n') # f-string korrigiert
+    print(f'Du hast{BLUE} {result["Zeit"]:.2f} {END}Sekunden gebraucht.\n') # f-string korrigiert
 
     # Auswertung
     get_result(result, stadt, land, fluss, random_character)
@@ -60,10 +60,13 @@ def get_result(result, stadt, land, fluss, buchstabe):
     if check_answer(fluss, "fluss", buchstabe):
         result["Punkte"] += 5
 
+    bonuszeit = max(0, TIME_FOR_BONUS - result["Zeit"])
+    result["Punkte"] = result["Punkte"] * (1 + (bonuszeit / 100)) # Zinseszins formel
+
 
 def get_player_name():
     """Erfragt den Namen der Person"""
-    player_name = input("Gib bitte deinen Namen ein! ")
+    player_name = input(f"\nGib bitte deinen {YELLOW}Namen{END} ein! ")
     return player_name
 
 

@@ -3,6 +3,18 @@ import requests
 from color import *
 #wikipedia.set_lang("de")
 
+KEYWORDS = {
+    "city_keywords" : [
+        "stadt", "großstadt", "metropole", "hauptstadt",
+        "gemeinde", "ort in", "kreisstadt", "hansestadt"
+    ],
+    "country_keywords" : [
+        "staat in", "land in", "staat (", "mitgliedstaat",
+        "republik", "königreich", "fürstentum", "bundesstaat"
+    ]
+
+}
+
 question_types = ["stadt", "land", "fluss"]
 
 # --- Hilfsfunktionen zuerst definieren ---
@@ -31,13 +43,9 @@ def if_exists_in_wiki(term: str) -> bool:
 
 def detect_city(categories, extract):
     """Erkennt ob es sich um eine Stadt handelt"""
-    city_keywords = [
-        "stadt", "großstadt", "metropole", "hauptstadt",
-        "gemeinde", "ort in", "kreisstadt", "hansestadt"
-    ]
     for category in categories:
         cat_lower = category.lower()
-        if any(keyword in cat_lower for keyword in city_keywords):
+        if any(keyword in cat_lower for keyword in KEYWORDS["city_keywords"]):
             return True
     extract_lower = extract[:200].lower()
     if "ist eine stadt" in extract_lower or "ist die hauptstadt" in extract_lower:
@@ -47,13 +55,10 @@ def detect_city(categories, extract):
 
 def detect_country(categories, extract):
     """Erkennt ob es sich um ein Land handelt"""
-    country_keywords = [
-        "staat in", "land in", "staat (", "mitgliedstaat",
-        "republik", "königreich", "fürstentum", "bundesstaat"
-    ]
+
     for category in categories:
         cat_lower = category.lower()
-        if any(keyword in cat_lower for keyword in country_keywords):
+        if any(keyword in cat_lower for keyword in KEYWORDS["country_keywords"]):
             return True
     extract_lower = extract[:200].lower()
     if "ist ein staat" in extract_lower or "ist ein land" in extract_lower:
