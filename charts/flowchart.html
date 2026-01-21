@@ -226,12 +226,13 @@
         <div class="tabs">
             <button class="tab active" onclick="showTab('overview')">📊 Übersicht</button>
             <button class="tab" onclick="showTab('detailed')">🔍 Detailliert</button>
+            <button class="tab" onclick="showTab('wikipedia')">🌐 Wikipedia-API</button>
             <button class="tab" onclick="showTab('stats')">📈 Statistiken</button>
         </div>
 
         <div id="overview" class="tab-content active">
             <h2>🎯 Zwei-Loop-Architektur</h2>
-            
+
             <div class="info-box">
                 <h3>💡 Konzept</h3>
                 <p>Das Programm verwendet zwei ineinander verschachtelte Loops:</p>
@@ -246,15 +247,15 @@ flowchart TD
     Start([START]) --> Load[Highscore laden]
     Load --> Greeting[Begrüßung]
     Greeting --> AppLoop{{"🔄 APP LOOP"}}
-    
+
     AppLoop --> Menu[Menü anzeigen<br/>1-Play 2-HS 3-Help 4-Exit]
     Menu --> Choice{User-Auswahl?}
-    
+
     Choice -->|1-Play| GameLoop{{"⚡ GAME LOOP"}}
     Choice -->|2-HS| ShowHS[Highscore zeigen]
     Choice -->|3-Help| ShowRules[Regeln zeigen]
     Choice -->|4-Exit| Exit[Verabschiedung]
-    
+
     GameLoop --> GenChar[Buchstabe A-Z]
     GenChar --> Timer[⏱️ Timer Start]
     Timer --> Input[Input: Stadt/Land/Fluss]
@@ -263,16 +264,16 @@ flowchart TD
     Calc --> Name[Name abfragen]
     Name --> Save[💾 Speichern]
     Save --> GameEnd[Zurück zum Menü]
-    
+
     GameEnd --> AppLoop
     ShowHS --> AppLoop
     ShowRules --> AppLoop
     Exit --> End([ENDE])
-    
+
     classDef loopStyle fill:#667eea,stroke:#4c6ef5,stroke-width:3px,color:#fff
     classDef processStyle fill:#51cf66,stroke:#2f9e44,stroke-width:2px
     classDef endStyle fill:#ff6b6b,stroke:#c92a2a,stroke-width:2px,color:#fff
-    
+
     class AppLoop,GameLoop loopStyle
     class GenChar,Timer,Input,Check,Calc,Name,Save processStyle
     class Exit,End endStyle
@@ -328,7 +329,7 @@ flowchart TD
 
         <div id="detailed" class="tab-content">
             <h2>🔍 Detaillierter Ablauf mit Error-Handling</h2>
-            
+
             <div class="info-box">
                 <h3>🛡️ Robustes Error-Handling</h3>
                 <p>Jeder kritische Punkt ist mit try-except-Blöcken geschützt. Das Programm kann nicht crashen!</p>
@@ -342,7 +343,7 @@ flowchart TD
     CheckLoad -->|FileNotFoundError| CreateNew[Neue Liste erstellen]
     CheckLoad -->|JSONDecodeError| CreateNew
     CreateNew --> Greeting
-    
+
     Greeting --> AppLoop{{"🔄 APP LOOP"}}
     AppLoop --> ShowMenu[Menü anzeigen]
     ShowMenu --> GetInput[User-Input]
@@ -350,12 +351,12 @@ flowchart TD
     Validate -->|Nein| ErrorMsg[Fehlermeldung]
     ErrorMsg --> AppLoop
     Validate -->|Ja| Choice{Auswahl?}
-    
+
     Choice -->|1-Play| GameStart[["⚡ GAME LOOP START"]]
     Choice -->|2| ShowHS[Highscore anzeigen]
     Choice -->|3| ShowHelp[Hilfe anzeigen]
     Choice -->|4| ExitApp[Programm beenden]
-    
+
     GameStart --> GenChar[Buchstabe generieren]
     GenChar --> TimerStart[Timer starten]
     TimerStart --> InputStadt[Input: Stadt]
@@ -368,42 +369,42 @@ flowchart TD
     InputFluss --> CheckAbort3{Abbruch?}
     CheckAbort3 -->|Ctrl+C/EOF| AbortGame
     CheckAbort3 -->|Nein| TimerStop[Timer stoppen]
-    
+
     TimerStop --> ValidStadt[Wikipedia: Stadt?]
     ValidStadt --> ValidLand[Wikipedia: Land?]
     ValidLand --> ValidFluss[Wikipedia: Fluss?]
     ValidFluss --> CalcPoints[Punkte berechnen]
     CalcPoints --> CalcBonus[Bonus berechnen]
     CalcBonus --> InputName[Name abfragen]
-    
+
     InputName --> CheckName{Name<br/>gültig?}
     CheckName -->|Leer/Lang| NameError[Fehler: Erneut]
     NameError --> InputName
     CheckName -->|Abbruch| DefaultName[Name: Unbekannt]
     CheckName -->|Gültig| ValidName[Name gespeichert]
-    
+
     ValidName --> UpdateHS[Highscore Update]
     DefaultName --> UpdateHS
     UpdateHS --> SaveHS[Speichern]
     SaveHS --> CheckSave{Speichern<br/>OK?}
     CheckSave -->|Ja| SaveOK[✓ Erfolgreich]
     CheckSave -->|Nein| SaveErr[⚠️ Warnung]
-    
+
     SaveOK --> GameEnd[["⚡ GAME LOOP ENDE"]]
     SaveErr --> GameEnd
     AbortGame --> GameEnd
     GameEnd --> AppLoop
-    
+
     ShowHS --> AppLoop
     ShowHelp --> AppLoop
     ExitApp --> FinalSave[Final: Speichern]
     FinalSave --> End([ENDE])
-    
+
     classDef errorStyle fill:#ff6b6b,stroke:#c92a2a,stroke-width:2px,color:#fff
     classDef successStyle fill:#51cf66,stroke:#2f9e44,stroke-width:2px,color:#fff
     classDef warningStyle fill:#ffd43b,stroke:#fab005,stroke-width:2px
     classDef loopStyle fill:#667eea,stroke:#4c6ef5,stroke-width:3px,color:#fff
-    
+
     class ErrorMsg,AbortGame,SaveErr,NameError errorStyle
     class SaveOK,ValidName successStyle
     class CreateNew,DefaultName warningStyle
@@ -436,6 +437,303 @@ flowchart TD
             </div>
         </div>
 
+        <div id="wikipedia" class="tab-content">
+            <h2>🌐 Wikipedia-API: Detaillierte Anfrage-Aufschlüsselung</h2>
+
+            <div class="info-box">
+                <h3>🔍 Wikipedia-Validierung: 3 Strategien</h3>
+                <p>Für jede Kategorie (Stadt/Land/Fluss) durchläuft das System einen intelligenten 3-Stufen-Prozess:</p>
+                <ol style="line-height: 2; margin-left: 20px;">
+                    <li><strong>Direkte Suche</strong> - Prüft ob Begriff existiert</li>
+                    <li><strong>Disambiguierung</strong> - Bei mehrdeutigen Begriffen (z.B. "Frankfurt")</li>
+                    <li><strong>Suffix-Suche</strong> - Bei falscher Weiterleitung (z.B. "Fulda" → Stadt statt Fluss)</li>
+                </ol>
+            </div>
+
+            <h3>📊 Hauptablauf: check_answer()</h3>
+
+            <div class="mermaid">
+flowchart TD
+    Start([check_answer<br/>Stadt/Land/Fluss]) --> CheckEmpty{Eingabe<br/>leer?}
+    CheckEmpty -->|Ja| ReturnFalse1[❌ return False]
+    CheckEmpty -->|Nein| CheckChar{Richtiger<br/>Buchstabe?}
+
+    CheckChar -->|Nein| ReturnFalse2[❌ return False]
+    CheckChar -->|Ja| WikiExists[if_exists_in_wiki<br/>Opensearch API]
+
+    WikiExists --> ExistsCheck{Existiert?}
+    ExistsCheck -->|Nein| ReturnFalse3[❌ return False<br/>'Kein Wikipedia-Eintrag']
+    ExistsCheck -->|Ja| GetResult[getresult_for_wikipedia_term<br/>+ expected_type]
+
+    GetResult --> ValidateType{Typ<br/>korrekt?}
+    ValidateType -->|Ja| ReturnTrue[✅ return True<br/>+5 Punkte]
+    ValidateType -->|Nein| ReturnFalse4[❌ return False<br/>'Typ nicht korrekt']
+
+    classDef successStyle fill:#51cf66,stroke:#2f9e44,stroke-width:2px,color:#fff
+    classDef errorStyle fill:#ff6b6b,stroke:#c92a2a,stroke-width:2px,color:#fff
+    classDef processStyle fill:#748ffc,stroke:#4c6ef5,stroke-width:2px,color:#fff
+
+    class ReturnTrue successStyle
+    class ReturnFalse1,ReturnFalse2,ReturnFalse3,ReturnFalse4 errorStyle
+    class WikiExists,GetResult processStyle
+            </div>
+
+            <h3>🔄 Detailliert: getresult_for_wikipedia_term()</h3>
+
+            <div class="flow-description">
+                <h4>🎯 Intelligente Mehrstufige Suche</h4>
+                <p>Diese Funktion implementiert eine ausgeklügelte Fallback-Strategie:</p>
+            </div>
+
+            <div class="mermaid">
+flowchart TD
+    Start([getresult_for_wikipedia_term<br/>term + expected_type]) --> GetPage[get_wikipedia_page_data<br/>Query API]
+
+    GetPage --> PageCheck{Seite<br/>gefunden?}
+    PageCheck -->|Nein| NotFound1[❌ create_not_found_result]
+
+    PageCheck -->|Ja| DisambCheck{Disambiguierungs-<br/>Seite?}
+
+    DisambCheck -->|Nein| NormalPage[Normale Seite]
+    DisambCheck -->|Ja| GetCandidates[get_disambiguation_candidates<br/>Opensearch API]
+
+    GetCandidates --> CandLoop[Für jeden Kandidaten:]
+    CandLoop --> TryCandidate[Kandidat-Seite abrufen]
+    TryCandidate --> CandCheck{Typ<br/>passt?}
+    CandCheck -->|Ja| Success1[✅ return result]
+    CandCheck -->|Nein| NextCandidate[Nächster Kandidat]
+    NextCandidate --> CandLoop
+    CandCheck -->|Keine passend| NotFound2[❌ create_not_found_result]
+
+    NormalPage --> Analyze1[analyze_wikipedia_page]
+    Analyze1 --> TypeCheck{Typ passt<br/>expected_type?}
+
+    TypeCheck -->|Ja| Success2[✅ return result]
+    TypeCheck -->|Nein| SuffixSearch[🔧 SUFFIX-SUCHE]
+
+    SuffixSearch --> GenVariants[get_term_variants_by_type<br/>z.B. 'Fulda (Fluss)']
+    GenVariants --> VarLoop[Für jede Variante:]
+    VarLoop --> TryVariant[Variante-Seite abrufen]
+    TryVariant --> VarCheck{Typ<br/>passt?}
+    VarCheck -->|Ja| Success3[✅ return result]
+    VarCheck -->|Nein| NextVar[Nächste Variante]
+    NextVar --> VarLoop
+    VarCheck -->|Keine passend| NotFound3[❌ create_not_found_result]
+
+    classDef successStyle fill:#51cf66,stroke:#2f9e44,stroke-width:3px,color:#fff
+    classDef errorStyle fill:#ff6b6b,stroke:#c92a2a,stroke-width:2px,color:#fff
+    classDef processStyle fill:#748ffc,stroke:#4c6ef5,stroke-width:2px,color:#fff
+    classDef specialStyle fill:#ffd43b,stroke:#fab005,stroke-width:3px
+
+    class Success1,Success2,Success3 successStyle
+    class NotFound1,NotFound2,NotFound3 errorStyle
+    class GetPage,GetCandidates,Analyze1 processStyle
+    class SuffixSearch,GenVariants specialStyle
+            </div>
+
+            <h3>🌐 API-Call Sequenz-Diagramm</h3>
+
+            <div class="mermaid">
+sequenceDiagram
+    participant User as Spieler
+    participant Game as Game Loop
+    participant Wiki as wiki.py
+    participant API as Wikipedia API
+
+    User->>Game: Eingabe: "Frankfurt"
+    Game->>Wiki: check_answer("Frankfurt", "stadt", "F")
+
+    Wiki->>API: 1️⃣ if_exists_in_wiki("Frankfurt")
+    API-->>Wiki: ✅ Existiert (Opensearch)
+
+    Wiki->>API: 2️⃣ get_wikipedia_page_data("Frankfurt")
+    API-->>Wiki: 📄 Disambiguierungs-Seite
+
+    Note over Wiki: Erkennt: Ist mehrdeutig!
+
+    Wiki->>API: 3️⃣ get_disambiguation_candidates("Frankfurt")
+    API-->>Wiki: ["Frankfurt am Main", "Frankfurt (Oder)", ...]
+
+    loop Für jeden Kandidaten
+        Wiki->>API: 4️⃣ get_wikipedia_page_data("Frankfurt am Main")
+        API-->>Wiki: 📄 Normale Stadt-Seite
+        Note over Wiki: Typ-Check: Stadt? ✅ JA
+    end
+
+    Wiki-->>Game: ✅ Valid: +5 Punkte
+    Game-->>User: "Berlin ist korrekt!"
+            </div>
+
+            <h3>⚡ Beispiel-Szenarien</h3>
+
+            <div class="stats-grid">
+                <div class="stat-card" style="background: linear-gradient(135deg, #51cf66 0%, #2f9e44 100%);">
+                    <h4>Szenario 1: Einfach</h4>
+                    <div class="value">1 Call</div>
+                    <p><strong>Beispiel:</strong> "Berlin" als Stadt</p>
+                    <ul style="text-align: left; font-size: 0.9em; margin-top: 10px;">
+                        <li>✅ Direkte Seite</li>
+                        <li>✅ Typ passt</li>
+                        <li>⏱️ ~0.3s</li>
+                    </ul>
+                </div>
+
+                <div class="stat-card" style="background: linear-gradient(135deg, #ffd43b 0%, #fab005 100%); color: #000;">
+                    <h4>Szenario 2: Disambiguierung</h4>
+                    <div class="value">3-5 Calls</div>
+                    <p><strong>Beispiel:</strong> "Frankfurt" als Stadt</p>
+                    <ul style="text-align: left; font-size: 0.9em; margin-top: 10px;">
+                        <li>🔍 Disambig-Seite</li>
+                        <li>📋 Kandidaten laden</li>
+                        <li>✅ Frankfurt am Main</li>
+                        <li>⏱️ ~1.5s</li>
+                    </ul>
+                </div>
+
+                <div class="stat-card" style="background: linear-gradient(135deg, #ff8787 0%, #fa5252 100%);">
+                    <h4>Szenario 3: Suffix-Suche</h4>
+                    <div class="value">4-6 Calls</div>
+                    <p><strong>Beispiel:</strong> "Fulda" als Fluss</p>
+                    <ul style="text-align: left; font-size: 0.9em; margin-top: 10px;">
+                        <li>❌ Erste Seite: Stadt</li>
+                        <li>🔧 Suffix-Varianten</li>
+                        <li>✅ Fulda (Fluss)</li>
+                        <li>⏱️ ~2.0s</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>🔧 Suffix-Generierung</h3>
+
+            <div class="mermaid">
+flowchart LR
+    Input["'Fulda' + type='fluss'"] --> Gen[get_term_variants_by_type]
+    Gen --> Var1["'Fulda'"]
+    Gen --> Var2["'Fulda (Fluss)'"]
+    Gen --> Var3["'Fulda (Gewässer)'"]
+    Gen --> Var4["'Fulda (Strom)'"]
+
+    Var1 --> Check1{API Call}
+    Var2 --> Check2{API Call}
+    Var3 --> Check3{API Call}
+    Var4 --> Check4{API Call}
+
+    Check1 -->|Stadt ❌| X1[Skip]
+    Check2 -->|Fluss ✅| Success[✅ Gefunden!]
+    Check3 -.->|Not needed| Skip
+    Check4 -.->|Not needed| Skip
+
+    style Success fill:#51cf66,stroke:#2f9e44,stroke-width:3px,color:#fff
+    style X1 fill:#ff6b6b,stroke:#c92a2a,stroke-width:2px,color:#fff
+    style Gen fill:#ffd43b,stroke:#fab005,stroke-width:2px
+            </div>
+
+            <h3>🛡️ Error-Handling pro API-Call</h3>
+
+            <div class="flow-description" style="background: #ffe8e8; border-color: #ff6b6b;">
+                <h4 style="color: #c92a2a;">Netzwerkfehler-Behandlung</h4>
+                <p>Jeder API-Call ist geschützt:</p>
+                <div class="mermaid">
+flowchart LR
+    API[API Call] --> Try{try}
+    Try --> Request[requests.get<br/>timeout=10s]
+    Request --> Success{Erfolg?}
+
+    Success -->|✅ 200 OK| Parse[JSON parsen]
+    Success -->|❌ ConnectionError| Err1[❌ Keine Verbindung]
+    Success -->|❌ Timeout| Err2[❌ 10s Timeout]
+    Success -->|❌ HTTPError| Err3[❌ Server-Fehler]
+
+    Parse --> Return[✅ return data]
+    Err1 --> Fallback[return None/[]<br/>Graceful degradation]
+    Err2 --> Fallback
+    Err3 --> Fallback
+
+    style Return fill:#51cf66,stroke:#2f9e44,stroke-width:2px,color:#fff
+    style Err1,Err2,Err3 fill:#ff6b6b,stroke:#c92a2a,stroke-width:2px,color:#fff
+    style Fallback fill:#ffd43b,stroke:#fab005,stroke-width:2px
+                </div>
+            </div>
+
+            <h3>📊 API-Endpoint-Übersicht</h3>
+
+            <div class="stats-grid">
+                <div class="stat-card" style="background: linear-gradient(135deg, #4c6ef5 0%, #364fc7 100%);">
+                    <h4>Opensearch API</h4>
+                    <div class="value" style="font-size: 1.5em;">if_exists_in_wiki()</div>
+                    <p style="font-size: 0.85em; margin-top: 10px;">
+                        <strong>Endpoint:</strong> /w/api.php<br/>
+                        <strong>Action:</strong> opensearch<br/>
+                        <strong>Zweck:</strong> Schnelle Existenz-Prüfung
+                    </p>
+                </div>
+
+                <div class="stat-card" style="background: linear-gradient(135deg, #9775fa 0%, #7950f2 100%);">
+                    <h4>Query API</h4>
+                    <div class="value" style="font-size: 1.5em;">get_page_data()</div>
+                    <p style="font-size: 0.85em; margin-top: 10px;">
+                        <strong>Endpoint:</strong> /w/api.php<br/>
+                        <strong>Action:</strong> query<br/>
+                        <strong>Zweck:</strong> Vollständige Seiten-Daten
+                    </p>
+                </div>
+
+                <div class="stat-card" style="background: linear-gradient(135deg, #f783ac 0%, #e64980 100%);">
+                    <h4>Disambiguation</h4>
+                    <div class="value" style="font-size: 1.5em;">get_candidates()</div>
+                    <p style="font-size: 0.85em; margin-top: 10px;">
+                        <strong>Endpoint:</strong> /w/api.php<br/>
+                        <strong>Action:</strong> opensearch<br/>
+                        <strong>Zweck:</strong> Alternative Begriffe
+                    </p>
+                </div>
+            </div>
+
+            <h3>⏱️ Performance-Analyse</h3>
+
+            <div class="legend">
+                <h3>Durchschnittliche Response-Zeiten</h3>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #51cf66;"></div>
+                    <div>
+                        <strong>if_exists_in_wiki()</strong> → 50-150ms<br/>
+                        <small>Leichtgewichtige Opensearch-Anfrage</small>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #748ffc;"></div>
+                    <div>
+                        <strong>get_wikipedia_page_data()</strong> → 200-500ms<br/>
+                        <small>Vollständige Query mit Extract + Kategorien</small>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ffd43b;"></div>
+                    <div>
+                        <strong>Disambiguation-Flow</strong> → 1-2s<br/>
+                        <small>Mehrere sequentielle Anfragen</small>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ff8787;"></div>
+                    <div>
+                        <strong>Suffix-Search-Flow</strong> → 1.5-2.5s<br/>
+                        <small>Fallback mit mehreren Varianten</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box" style="background: linear-gradient(135deg, #20c997 0%, #0ca678 100%);">
+                <h3>💡 Optimierungspotential</h3>
+                <ul style="line-height: 1.8;">
+                    <li><strong>Parallele Requests:</strong> async/await → 3x schneller</li>
+                    <li><strong>Caching:</strong> Häufige Begriffe lokal → 0ms Latenz</li>
+                    <li><strong>Batch-Requests:</strong> Mehrere Begriffe gleichzeitig</li>
+                    <li><strong>Local Wikipedia-Dump:</strong> Offline-Modus → keine Netzwerk-Latenz</li>
+                </ul>
+            </div>
+        </div>
+
         <div id="stats" class="tab-content">
             <h2>📈 Programm-Statistiken & Performance</h2>
 
@@ -463,7 +761,7 @@ flowchart TD
             </div>
 
             <h3>⏱️ Performance-Charakteristiken</h3>
-            
+
             <div class="flow-description">
                 <h4>Durchschnittliche Zeiten</h4>
                 <ul>
@@ -495,7 +793,7 @@ flowchart TD
             </div>
 
             <h3>📊 Datenfluss</h3>
-            
+
             <div class="mermaid">
 flowchart LR
     JSON[(daten.json<br/>Highscore)] -->|Laden| AppLoop[App Loop]
@@ -504,7 +802,7 @@ flowchart LR
     Wiki -->|Validation| GameLoop
     GameLoop -->|result| AppLoop
     AppLoop -->|Append| JSON
-    
+
     style JSON fill:#ffd43b
     style Wiki fill:#ff6b6b,color:#fff
     style AppLoop fill:#667eea,color:#fff
@@ -530,7 +828,7 @@ flowchart LR
     </div>
 
     <script>
-        mermaid.initialize({ 
+        mermaid.initialize({
             startOnLoad: true,
             theme: 'default',
             flowchart: {
@@ -543,10 +841,10 @@ flowchart LR
             // Hide all tabs
             const contents = document.querySelectorAll('.tab-content');
             contents.forEach(content => content.classList.remove('active'));
-            
+
             const tabs = document.querySelectorAll('.tab');
             tabs.forEach(tab => tab.classList.remove('active'));
-            
+
             // Show selected tab
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
