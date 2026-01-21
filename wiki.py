@@ -16,14 +16,13 @@ KEYWORDS = {
     "river_keywords": [
         "fluss", "strom", "gewässer", "nebenfluss",
         "zufluss", "fließgewässer", "flüsse in",
-        "fluss in", "gewässer in", "längste Fluss"
+        "fluss in", "gewässer in"
     ],
     "river_patterns": [
-        "längste Fluss"
-        "ein fluss", "ist ein strom", "ist ein nebenfluss",
+        "ist ein fluss", "ist ein strom", "ist ein nebenfluss",
         "ist ein zufluss", "fließt durch", "mündet in",
         "entspringt", "fluss in", "rechter nebenfluss",
-        "linker nebenfluss", "Der Fluss"
+        "linker nebenfluss"
     ]
 }
 
@@ -385,15 +384,29 @@ def getresult_for_wikipedia_term(term, expected_type=None):
 
         # Jeden Kandidaten durchprobieren
         for candidate in candidates:
+            # Original-Begriff überspringen (das ist die Disambiguierungsseite)
+            if candidate.lower() == term_original.lower():
+                continue
+
+            # WICHTIG: Nur Kandidaten akzeptieren, die den Originalterm enthalten
+            # z.B. "Po (Fluss)" für "Po", aber nicht "Polen" für "Po"
+            # Dies verhindert, dass "Polen" als Alternative für "Po" akzeptiert wird
             candidate_lower = candidate.lower()
             term_lower = term_original.lower()
 
-            # 🔒 Schutz vor falschen Treffern wie "Polen"
-            if not (
-                    candidate_lower == term_lower
-                    or candidate_lower.startswith(term_lower + " ")
-                    or candidate_lower.startswith(term_lower + " (")
-            ):
+            # Prüfen ob der Kandidat den Originalterm enthält (mit Klammern wie "Po (Fluss)")
+            # ODER ob es genau der Begriff mit Suffix ist
+            is_valid_variant = (
+                # Variante 1: "Term (Details)" - z.B. "Po (Fluss)"
+                    candidate_lower.startswith(term_lower + " (") or
+                    # Variante 2: "Term-Details" - z.B. "Frankfurt-Oder"
+                    candidate_lower.startswith(term_lower + "-") or
+                    # Variante 3: Exakt gleicher Anfang bis zum ersten Leerzeichen
+                    # Dies fängt Fälle wie "Frankfurt am Main" für "Frankfurt" ab
+                    (candidate_lower.split()[0] == term_lower if ' ' in candidate_lower else False)
+            )
+
+            if not is_valid_variant:
                 continue
 
             candidate_page = get_wikipedia_page_data(candidate.replace(" ", "_"))
@@ -424,7 +437,38 @@ def getresult_for_wikipedia_term(term, expected_type=None):
                         f'(Typ: {result["wikipedia"]["type"]}){END}')
                     return result
 
-        # Kein passender Kandidat gefunden
+        # Kein passender Kandidat gefunden über Disambiguierung
+        # Versuche nun Typ-spezifische Varianten (z.B. "Po (Fluss)")
+        if expected_type:
+            print(f'{YELLOW}Keine Disambiguierungs-Alternative gefunden. '
+                  f'Versuche typ-spezifische Varianten für "{expected_type}"...{END}')
+
+            variants = get_term_variants_by_type(term_original, expected_type)
+
+            # Original überspringen (haben wir schon versucht)
+            for variant in variants[1:]:
+                variant_page = get_wikipedia_page_data(variant.replace(" ", "_"))
+
+                if variant_page and "extract" in variant_page and "missing" not in variant_page:
+                    # Keine weitere Disambiguierung bei Varianten
+                    if is_disambiguation_page(variant_page):
+                        continue
+
+                    variant_result = analyze_wikipedia_page(variant_page, term_original)
+
+                    # Prüfen ob Typ passt
+                    type_map = {
+                        "stadt": variant_result["validation"]["Stadt"],
+                        "land": variant_result["validation"]["Land"],
+                        "fluss": variant_result["validation"]["Fluss"]
+                    }
+
+                    if type_map.get(expected_type.lower(), False):
+                        print(f'{GREEN}Gefunden: "{variant_result["wikipedia"]["title"]}" '
+                              f'(über Typ-Suffix-Suche){END}')
+                        return variant_result
+
+        # Immer noch nichts gefunden
         print(f'{RED}Keine passende Alternative für "{term_original}" gefunden{END}')
         return create_not_found_result(term_original)
 

@@ -62,4 +62,11 @@ def test_Po_als_Land():
 def test_Po_als_Fluss():
     assert wiki.check_answer("Po", "fluss", "p") == True, "Po ist kein Fluss"
 
+def test_Franken_als_Land():
+    assert wiki.check_answer("Franken", "land", "f") == False, "Franken ist ein Land"
+
+def test_Ecbatana_als_Stadt():
+    assert wiki.check_answer("Ecbatana", "stadt", "e") == True, "Ecbatana ist keine Stadt"
+
+
 pytest.main()
