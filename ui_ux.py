@@ -1,5 +1,4 @@
 from color import *
-import pygame
 import data_transfer
 import backend
 import soundmodul
@@ -7,12 +6,21 @@ import settings
 
 highscore = {}  # Für lokale Anzeige (falls nötig)
 
-def change_volume():
-    settings.volume = float(input("Gebe die Lautstärke als Wert zwischen 0 und 1 an: "))
-    pygame.mixer.music.set_volume(settings.volume)
 
 def show_settings():
-    change_volume()
+    print("1. Lautstärke anpassen")
+
+    while True:
+        try:
+            setting = int(input("Wähle die Settings, die du ändern möchtest: "))
+            if setting == 1:
+                backend.change_volume()
+            else:
+                print("Ungültige Auswahl. Nur 1 ist verfügbar.")
+            break
+        except ValueError:
+            print("Fehler: Bitte eine Zahl eingeben (z.B. 1).")
+
 
 def lets_play():
     """ Nachricht, die ausgegeben wird, wenn die Spielrunde startet"""

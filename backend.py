@@ -5,8 +5,25 @@ import data_transfer
 import json
 from color import *
 from wiki import *  # check_answer, question_types etc.
+import settings
+import pygame
 
 TIME_FOR_BONUS = 30
+
+def change_volume():
+    while True:
+        try:
+            value = input("Gebe die Lautstärke als Wert zwischen 0 und 1 an: ")
+            volume = float(value)
+
+            if 0.0 <= volume <= 1.0:
+                settings.volume = volume
+                pygame.mixer.music.set_volume(settings.volume)
+                break
+            else:
+                print("Fehler: Bitte einen Wert zwischen 0 und 1 eingeben.")
+        except ValueError:
+            print("Fehler: Bitte eine Zahl eingeben (z.B. 0.5).")
 
 
 def get_random_character():
