@@ -28,12 +28,18 @@ def test_Hamburg():
     """
     assert wiki.check_answer("Hamburg", "stadt", "h") == True, "Diese Stadt existiert nicht"
 
+def test_Donai():
+    """
+    Donai als Eingabe für Stadt
+    """
+    assert wiki.check_answer("Donai", "stadt", "d") == True, "Diese Stadt existiert nicht"
+
 def test_Stadt_Richtig_Aber_Buchstabe_Falsch():
     """
     Prüft, ob Buchstabe zur Eingabe als Anfangsbuchstabe passt
     """
     assert wiki.check_answer("Hamburg", "stadt", "g") == False, "Der Buchstabe wird nicht richtig geprüft"
 
-
+"""All caps antworten klappen nicht"""
 
 pytest.main()

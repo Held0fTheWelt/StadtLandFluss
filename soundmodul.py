@@ -10,12 +10,12 @@ def play_menu_music(volume=0.02):
     Args:
         volume: Lautstärke von 0.0 (stumm) bis 1.0 (max)
     """
-    pygame.mixer.music.load("sounds/price_is_right.wav")
+    pygame.mixer.music.load("sounds/price_is_right.mp3")
     pygame.mixer.music.set_volume(volume)
     pygame.mixer.music.play(-1)  # -1 = Endlosschleife
 
 
-def play_game_music(volume=0.3):
+def play_game_music(volume=0.02):
     """Spielt die Spielmusik ab"""
     pygame.mixer.music.load("sounds/thinking.wav")
     pygame.mixer.music.set_volume(volume)
