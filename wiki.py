@@ -1,14 +1,15 @@
 import wikipedia
 import requests
 from color import *
-#wikipedia.set_lang("de")
+
+# wikipedia.set_lang("de")
 
 KEYWORDS = {
-    "city_keywords" : [
+    "city_keywords": [
         "stadt", "großstadt", "metropole", "hauptstadt",
         "gemeinde", "ort in", "kreisstadt", "hansestadt"
     ],
-    "country_keywords" : [
+    "country_keywords": [
         "staat in", "land in", "staat (", "mitgliedstaat",
         "republik", "königreich", "fürstentum", "bundesstaat"
     ]
@@ -16,6 +17,7 @@ KEYWORDS = {
 }
 
 question_types = ["stadt", "land", "fluss"]
+
 
 # --- Hilfsfunktionen zuerst definieren ---
 
@@ -41,28 +43,121 @@ def if_exists_in_wiki(term: str) -> bool:
     return bool(data[1])
 
 
+def get_term_variants_by_type(term, expected_type=None):
+    """
+    Generiert Suchvarianten basierend auf dem erwarteten Typ.
+
+    Beispiel:
+        get_term_variants_by_type("Fulda", "fluss")
+        → ["Fulda", "Fulda (Fluss)", "Fulda (Gewässer)"]
+    """
+    variants = [term]  # Original immer zuerst
+
+    if expected_type:
+        type_suffixes = {
+            "stadt": [" (Stadt)", " (Gemeinde)", " (Ort)"],
+            "land": [" (Staat)", " (Land)"],
+            "fluss": [" (Fluss)", " (Gewässer)", " (Strom)"]
+        }
+
+        suffixes = type_suffixes.get(expected_type.lower(), [])
+        for suffix in suffixes:
+            variants.append(term + suffix)
+
+    return variants
+
+
+def get_disambiguation_candidates(term):
+    """
+    Holt alternative Vorschläge von Wikipedia für mehrdeutige Begriffe.
+    Gibt eine Liste von möglichen Begriffen zurück.
+    """
+    url = "https://de.wikipedia.org/w/api.php"
+    params = {
+        "action": "opensearch",
+        "search": term,
+        "limit": 10,  # Mehr Ergebnisse für bessere Auswahl
+        "namespace": 0,
+        "format": "json"
+    }
+    headers = {
+        "User-Agent": "StadtLandFlussGame/1.0 (https://example.com)"
+    }
+
+    try:
+        response = requests.get(url, params=params, headers=headers)
+        response.raise_for_status()
+        data = response.json()
+        # data[1] enthält die Titel der gefundenen Artikel
+        return data[1] if len(data) > 1 else []
+    except:
+        return []
+
+
+def is_disambiguation_page(page_data):
+    """
+    Prüft ob es sich um eine Begriffsklärungsseite handelt.
+    """
+    if "categories" in page_data:
+        for cat in page_data["categories"]:
+            cat_title = cat["title"].lower()
+            if "begriffsklärung" in cat_title or "begriffserklärung" in cat_title:
+                return True
+
+    # Auch im Extract nach Hinweisen suchen
+    extract = page_data.get("extract", "").lower()
+    if "bezeichnet:" in extract or "steht für:" in extract:
+        return True
+
+    return False
+
+
 def detect_city(categories, extract):
     """Erkennt ob es sich um eine Stadt handelt"""
     for category in categories:
         cat_lower = category.lower()
         if any(keyword in cat_lower for keyword in KEYWORDS["city_keywords"]):
             return True
-    extract_lower = extract[:200].lower()
-    if "ist eine stadt" in extract_lower or "ist die hauptstadt" in extract_lower:
+
+    # Längeren Text-Auszug prüfen für bessere Erkennung
+    extract_lower = extract[:300].lower()
+    city_patterns = [
+        "ist eine stadt",
+        "ist die hauptstadt",
+        "ist eine großstadt",
+        "ist eine gemeinde",
+        "stadt in",
+        "gemeinde in",
+        "kreisstadt"
+    ]
+
+    if any(pattern in extract_lower for pattern in city_patterns):
         return True
+
     return False
 
 
 def detect_country(categories, extract):
     """Erkennt ob es sich um ein Land handelt"""
-
     for category in categories:
         cat_lower = category.lower()
         if any(keyword in cat_lower for keyword in KEYWORDS["country_keywords"]):
             return True
-    extract_lower = extract[:200].lower()
-    if "ist ein staat" in extract_lower or "ist ein land" in extract_lower:
+
+    # Längeren Text-Auszug prüfen für bessere Erkennung
+    extract_lower = extract[:300].lower()
+    country_patterns = [
+        "ist ein staat",
+        "ist ein land",
+        "ist eine republik",
+        "ist ein königreich",
+        "staat in",
+        "land in"
+    ]
+
+    if any(pattern in extract_lower for pattern in country_patterns):
         return True
+
     return False
 
 
@@ -70,15 +165,32 @@ def detect_river(categories, extract):
     """Erkennt ob es sich um einen Fluss handelt"""
     river_keywords = [
         "fluss", "strom", "gewässer", "nebenfluss",
-        "zufluss", "fließgewässer"
+        "zufluss", "fließgewässer", "flüsse in",
+        "fluss in", "gewässer in"
     ]
     for category in categories:
         cat_lower = category.lower()
         if any(keyword in cat_lower for keyword in river_keywords):
             return True
-    extract_lower = extract[:200].lower()
-    if "ist ein fluss" in extract_lower or "ist ein strom" in extract_lower:
+
+    # Längeren Text-Auszug prüfen für bessere Erkennung
+    extract_lower = extract[:300].lower()
+    river_patterns = [
+        "ist ein fluss",
+        "ist ein strom",
+        "ist ein nebenfluss",
+        "ist ein zufluss",
+        "fließt durch",
+        "mündet in",
+        "entspringt",
+        "fluss in",
+        "rechter nebenfluss",
+        "linker nebenfluss"
+    ]
+
+    if any(pattern in extract_lower for pattern in river_patterns):
         return True
+
     return False
 
 
@@ -114,16 +226,11 @@ def create_not_found_result(term):
     }
 
 
-def getresult_for_wikipedia_term(term):
+def get_wikipedia_page_data(term_normalized):
     """
-    Analysiert einen Begriff und kategorisiert ihn als Stadt, Land oder Fluss
+    Holt die Rohdaten einer Wikipedia-Seite.
     """
-    term_original = term.strip()
-    term_normalized = term_original.replace(" ", "_")
-
     url = "https://de.wikipedia.org/w/api.php"
-
-    # Erweiterte Abfrage: Extract + Kategorien
     params = {
         "action": "query",
         "prop": "extracts|categories",
@@ -131,24 +238,28 @@ def getresult_for_wikipedia_term(term):
         "explaintext": True,
         "titles": term_normalized,
         "format": "json",
-        "cllimit": 50  # Anzahl der Kategorien
+        "cllimit": 50
     }
-
     headers = {
         "User-Agent": "StadtLandFlussGame/1.0 (https://example.com)"
     }
 
-    response = requests.get(url, params = params, headers = headers)
+    response = requests.get(url, params=params, headers=headers)
     if response.status_code != 200:
-        return create_not_found_result(term_original)
+        return None
 
     data = response.json()
     pages = data["query"]["pages"]
     page = next(iter(pages.values()))
 
-    # Prüfen ob Seite existiert
-    if "missing" in page or "extract" not in page:
-        return create_not_found_result(term_original)
+    return page
+
+
+def analyze_wikipedia_page(page, term_original):
+    """
+    Analysiert eine Wikipedia-Seite und erstellt das Ergebnis-Dictionary.
+    """
+    term_normalized = term_original.replace(" ", "_")
 
     # Kategorien extrahieren
     categories = []
@@ -185,7 +296,7 @@ def getresult_for_wikipedia_term(term):
                 "is_country": is_country,
                 "is_river": is_river
             },
-            "categories": categories[:10]  # Erste 10 Kategorien
+            "categories": categories[:10]
         },
         "validation": {
             "Stadt": is_city,
@@ -194,6 +305,125 @@ def getresult_for_wikipedia_term(term):
         }
     }
 
+    return result
+
+
+def getresult_for_wikipedia_term(term, expected_type=None):
+    """
+    Analysiert einen Begriff und kategorisiert ihn als Stadt, Land oder Fluss.
+    Mit automatischer Disambiguierung für mehrdeutige Begriffe.
+
+    Args:
+        term: Der zu suchende Begriff
+        expected_type: Optional - erwartet "stadt", "land" oder "fluss"
+                      für intelligentere Disambiguierung
+
+    Beispiel:
+        - "Frankfurt" wird automatisch zu "Frankfurt am Main" aufgelöst
+        - "Paris" wird automatisch zu "Paris (Frankreich)" aufgelöst
+        - "Fulda" mit type="fluss" findet "Fulda (Fluss)"
+    """
+    term_original = term.strip()
+    term_normalized = term_original.replace(" ", "_")
+
+    # Erste Seite abrufen
+    page = get_wikipedia_page_data(term_normalized)
+
+    if page is None:
+        return create_not_found_result(term_original)
+
+    # Prüfen ob Seite existiert
+    if "missing" in page or "extract" not in page:
+        return create_not_found_result(term_original)
+
+    # Prüfen ob es eine Begriffsklärungsseite ist
+    if is_disambiguation_page(page):
+        print(f'{YELLOW}"{term_original}" ist mehrdeutig. Suche nach passender Alternative...{END}')
+
+        # Kandidaten holen
+        candidates = get_disambiguation_candidates(term)
+
+        if not candidates:
+            return create_not_found_result(term_original)
+
+        # Jeden Kandidaten durchprobieren
+        for candidate in candidates:
+            # Original-Begriff überspringen (das ist die Disambiguierungsseite)
+            if candidate.lower() == term_original.lower():
+                continue
+
+            candidate_page = get_wikipedia_page_data(candidate.replace(" ", "_"))
+
+            if candidate_page and "extract" in candidate_page and "missing" not in candidate_page:
+                # Prüfen ob es wieder eine Disambiguierungsseite ist
+                if is_disambiguation_page(candidate_page):
+                    continue
+
+                # Ergebnis analysieren
+                result = analyze_wikipedia_page(candidate_page, term_original)
+
+                # Wenn ein erwarteter Typ angegeben wurde, nur passende zurückgeben
+                if expected_type:
+                    type_map = {
+                        "stadt": result["validation"]["Stadt"],
+                        "land": result["validation"]["Land"],
+                        "fluss": result["validation"]["Fluss"]
+                    }
+
+                    if type_map.get(expected_type.lower(), False):
+                        print(f'{GREEN}Gefunden: "{result["wikipedia"]["title"]}"{END}')
+                        return result
+                # Ohne erwarteten Typ: Ersten gültigen Typ zurückgeben
+                elif result["wikipedia"]["type"] is not None:
+                    print(
+                        f'{GREEN}Gefunden: "{result["wikipedia"]["title"]}" (Typ: {result["wikipedia"]["type"]}){END}')
+                    return result
+
+        # Kein passender Kandidat gefunden
+        print(f'{RED}Keine passende Alternative für "{term_original}" gefunden{END}')
+        return create_not_found_result(term_original)
+
+    # Normale Seite gefunden - analysieren
+    result = analyze_wikipedia_page(page, term_original)
+
+    # NEUE LOGIK: Wenn expected_type gegeben ist, prüfen ob Typ übereinstimmt
+    if expected_type:
+        type_map = {
+            "stadt": result["validation"]["Stadt"],
+            "land": result["validation"]["Land"],
+            "fluss": result["validation"]["Fluss"]
+        }
+
+        # Wenn der gefundene Artikel NICHT zum erwarteten Typ passt
+        if not type_map.get(expected_type.lower(), False):
+            print(f'{YELLOW}"{term_original}" passt nicht zum Typ "{expected_type}". Suche nach Varianten...{END}')
+
+            # Versuche Typ-spezifische Varianten (z.B. "Fulda (Fluss)")
+            variants = get_term_variants_by_type(term_original, expected_type)
+
+            # Erste Variante überspringen (das ist der Original-Begriff, den wir schon haben)
+            for variant in variants[1:]:
+                variant_page = get_wikipedia_page_data(variant.replace(" ", "_"))
+
+                if variant_page and "extract" in variant_page and "missing" not in variant_page:
+                    variant_result = analyze_wikipedia_page(variant_page, term_original)
+
+                    # Prüfen ob diese Variante zum Typ passt
+                    variant_type_map = {
+                        "stadt": variant_result["validation"]["Stadt"],
+                        "land": variant_result["validation"]["Land"],
+                        "fluss": variant_result["validation"]["Fluss"]
+                    }
+
+                    if variant_type_map.get(expected_type.lower(), False):
+                        print(f'{GREEN}Gefunden: "{variant_result["wikipedia"]["title"]}" (über Suffix-Suche){END}')
+                        return variant_result
+
+            # Keine passende Variante gefunden
+            print(f'{RED}Keine passende "{expected_type}"-Variante für "{term_original}" gefunden{END}')
+            return create_not_found_result(term_original)
+
+    # Typ passt oder kein expected_type angegeben
     return result
 
 
@@ -212,7 +442,8 @@ def check_answer(value, question_type, current_character):
 
     # ist der erste buchstabe gleich dem aktuellen buchstaben
     if current_character.lower() != value[0].lower():
-        print(f"Das ist nicht der Anfangsbuchstabe, der benötigt wird. Das Wort sollte mit {RED}{current_character}{END} beginnen.")
+        print(
+            f"Das ist nicht der Anfangsbuchstabe, der benötigt wird. Das Wort sollte mit {RED}{current_character}{END} beginnen.")
         return False
 
     # gibt es einen wikipedia eintrag, zu der aktuellen eingabe
@@ -220,7 +451,8 @@ def check_answer(value, question_type, current_character):
         print("Es gibt keinen passenden Wikipedia Eintrag")
         return False
 
-    result = getresult_for_wikipedia_term(value)
+    # Typ an getresult übergeben für bessere Disambiguierung
+    result = getresult_for_wikipedia_term(value, expected_type=question_type)
 
     # Typ prüfen
     validation_map = {
