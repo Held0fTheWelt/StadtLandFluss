@@ -40,6 +40,14 @@ def test_Stadt_Richtig_Aber_Buchstabe_Falsch():
     """
     assert wiki.check_answer("Hamburg", "stadt", "g") == False, "Der Buchstabe wird nicht richtig geprüft"
 
-"""All caps antworten klappen nicht"""
+
+def test_all_caps_answers():
+    """
+    All caps antworten klappen nicht
+    """
+    assert wiki.check_answer("PASSAU", "stadt", "p") == True, "Der Buchstabe wird nicht richtig geprüft"
+
+def test_no_caps_answers():
+    assert wiki.check_answer("passau", "stadt", "p") == True, "Der Buchstabe wird nicht richtig geprüft"
 
 pytest.main()

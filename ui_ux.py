@@ -1,9 +1,18 @@
 from color import *
+import pygame
 import data_transfer
 import backend
 import soundmodul
+import settings
 
 highscore = {}  # Für lokale Anzeige (falls nötig)
+
+def change_volume():
+    settings.volume = float(input("Gebe die Lautstärke als Wert zwischen 0 und 1 an: "))
+    pygame.mixer.music.set_volume(settings.volume)
+
+def show_settings():
+    change_volume()
 
 def lets_play():
     """ Nachricht, die ausgegeben wird, wenn die Spielrunde startet"""
@@ -68,7 +77,8 @@ def menu():
             "\t" + GREEN + "1." + END + " 🕹️ PLAY\n"
             "\t" + GREEN + "2." + END + " 🏆 HIGHSCORE\n"
             "\t" + GREEN + "3." + END + " 🛟 HELP\n"
-            "\t" + GREEN + "4." + END + " ❌ EXIT\n"
+            "\t" + GREEN + "4." + END + " ⚙️ SETTINGS\n"                                        
+            "\t" + GREEN + "5." + END + " ❌ EXIT\n"
         ))
     except ValueError:
         print("Ungültige Eingabe. Bitte Zahl 1-4 eingeben.")
@@ -78,15 +88,17 @@ def menu():
     if user_choice == 1:
         # Play erst importieren, wenn benötigt → verhindert zirkuläre Abhängigkeit
         soundmodul.stop_music()
-        soundmodul.play_game_music()
+        soundmodul.play_game_music(settings.volume)
         backend.play()
         soundmodul.stop_music()
-        soundmodul.play_menu_music()
+        soundmodul.play_menu_music(settings.volume)
     elif user_choice == 2:
         show_highscore()
     elif user_choice == 3:
         show_rules()
     elif user_choice == 4:
+        show_settings()
+    elif user_choice == 5:
         soundmodul.stop_music()
         return False
     return True

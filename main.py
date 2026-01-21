@@ -2,6 +2,7 @@ import data_transfer
 from backend import *
 from ui_ux import *
 import soundmodul
+import settings
 
 def main():
     """
@@ -13,7 +14,7 @@ def main():
         highscore = []
 
     # Menü Musik abspielen
-    soundmodul.play_menu_music()
+    soundmodul.play_menu_music(settings.volume)
 
     greeting()
 

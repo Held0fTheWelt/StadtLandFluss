@@ -3,7 +3,7 @@ import time
 import ui_ux
 import data_transfer
 import json
-
+from color import *
 from wiki import *  # check_answer, question_types etc.
 
 TIME_FOR_BONUS = 30

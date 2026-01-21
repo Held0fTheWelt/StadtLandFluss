@@ -1,5 +1,6 @@
+
 import requests
-from color import *
+from color import RED, GREEN, YELLOW, END
 
 # wikipedia.set_lang("de")
 
@@ -453,8 +454,7 @@ def getresult_for_wikipedia_term(term, expected_type=None):
                     }
 
                     if variant_type_map.get(expected_type.lower(), False):
-                        print(f'{GREEN}Gefunden: "{variant_result["wikipedia"]["title"]}" '
-                              f'(über Suffix-Suche){END}')
+                        print(f'{GREEN}Gefunden: "{variant_result["wikipedia"]["title"]}" (über Suffix-Suche){END}')
                         return variant_result
 
             # Keine passende Variante gefunden
@@ -463,6 +463,15 @@ def getresult_for_wikipedia_term(term, expected_type=None):
 
     # Typ passt oder kein expected_type angegeben
     return result
+
+
+def normalize_term(term: str) -> str:
+    """
+    Normalisiert Benutzereingaben für Wikipedia:
+    - Entfernt Leerzeichen
+    - Korrigiert Groß-/Kleinschreibung
+    """
+    return term.strip().title()
 
 
 # --- check_answer zuletzt, nachdem alle Hilfsfunktionen existieren ---
@@ -476,6 +485,7 @@ def check_answer(value, question_type, current_character):
     Bei Netzwerkfehlern gibt die Funktion False zurück und zeigt eine Fehlermeldung.
     """
     # ist etwas eingegeben?
+    value = normalize_term(value)
     if not value:
         print(f'{RED}"{question_type.capitalize()}"{END} hat keine Eingabe!')
         return False
@@ -504,6 +514,5 @@ def check_answer(value, question_type, current_character):
     if validation_map.get(question_type.lower(), False):
         print(f'Die Antwort {GREEN}"{value}"{END} als "{question_type.capitalize()}" ist korrekt.')
         return True
-
     print(f'Die Antwort {RED}"{value}"{END} als "{question_type.capitalize()}" ist nicht korrekt.')
     return False

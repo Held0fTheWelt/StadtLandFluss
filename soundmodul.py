@@ -23,7 +23,9 @@ def play_game_music(volume=0.02):
 
 
 def stop_music():
-    """Stoppt die Musik"""
+    """
+    Stoppt die Musik
+    """
     pygame.mixer.music.stop()
 
 
@@ -38,10 +40,14 @@ def set_volume(volume):
 
 
 def pause_music():
-    """Pausiert die Musik"""
+    """
+    Pausiert die Musik
+    """
     pygame.mixer.music.pause()
 
 
 def unpause_music():
-    """Setzt pausierte Musik fort"""
+    """
+    Setzt pausierte Musik fort
+    """
     pygame.mixer.music.unpause()
