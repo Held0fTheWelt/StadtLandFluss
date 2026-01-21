@@ -56,5 +56,10 @@ def test_Schweden_als_Stadt():
 def test_Stuttgart_als_Land():
     assert wiki.check_answer("Stuttgart", "land", "s") == False, "Schweden ist keine Stadt"
 
+def test_Po_als_Land():
+    assert wiki.check_answer("Po", "land", "p") == False, "Po ist ein Land"
+
+def test_Po_als_Fluss():
+    assert wiki.check_answer("Po", "fluss", "p") == True, "Po ist kein Fluss"
 
 pytest.main()

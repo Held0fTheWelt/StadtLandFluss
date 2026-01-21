@@ -16,13 +16,14 @@ KEYWORDS = {
     "river_keywords": [
         "fluss", "strom", "gewässer", "nebenfluss",
         "zufluss", "fließgewässer", "flüsse in",
-        "fluss in", "gewässer in"
+        "fluss in", "gewässer in", "längste Fluss"
     ],
     "river_patterns": [
-        "ist ein fluss", "ist ein strom", "ist ein nebenfluss",
+        "längste Fluss"
+        "ein fluss", "ist ein strom", "ist ein nebenfluss",
         "ist ein zufluss", "fließt durch", "mündet in",
         "entspringt", "fluss in", "rechter nebenfluss",
-        "linker nebenfluss"
+        "linker nebenfluss", "Der Fluss"
     ]
 }
 
@@ -384,8 +385,15 @@ def getresult_for_wikipedia_term(term, expected_type=None):
 
         # Jeden Kandidaten durchprobieren
         for candidate in candidates:
-            # Original-Begriff überspringen (das ist die Disambiguierungsseite)
-            if candidate.lower() == term_original.lower():
+            candidate_lower = candidate.lower()
+            term_lower = term_original.lower()
+
+            # 🔒 Schutz vor falschen Treffern wie "Polen"
+            if not (
+                    candidate_lower == term_lower
+                    or candidate_lower.startswith(term_lower + " ")
+                    or candidate_lower.startswith(term_lower + " (")
+            ):
                 continue
 
             candidate_page = get_wikipedia_page_data(candidate.replace(" ", "_"))
