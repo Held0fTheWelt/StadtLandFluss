@@ -47,7 +47,6 @@ def change_volume():
 
             if 0 <= volume <= 100:
                 settings.volume = volume * 0.0006
-                print(f"{settings.volume}")
                 pygame.mixer.music.set_volume(settings.volume)
                 break
             else:
