@@ -2,6 +2,7 @@ import random
 import time
 import ui_ux
 import data_transfer
+import json
 
 from wiki import *  # check_answer, question_types etc.
 
