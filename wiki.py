@@ -12,8 +12,18 @@ KEYWORDS = {
     "country_keywords": [
         "staat in", "land in", "staat (", "mitgliedstaat",
         "republik", "königreich", "fürstentum", "bundesstaat"
+    ],
+    "river_keywords" : [
+            "fluss", "strom", "gewässer", "nebenfluss",
+            "zufluss", "fließgewässer", "flüsse in",
+            "fluss in", "gewässer in"
+    ],
+    "river_patterns" : [
+        "ist ein fluss", "ist ein strom", "ist ein nebenfluss",
+        "ist ein zufluss", "fließt durch", "mündet in",
+        "entspringt", "fluss in", "rechter nebenfluss",
+        "linker nebenfluss"
     ]
-
 }
 
 question_types = ["stadt", "land", "fluss"]
@@ -163,32 +173,15 @@ def detect_country(categories, extract):
 
 def detect_river(categories, extract):
     """Erkennt ob es sich um einen Fluss handelt"""
-    river_keywords = [
-        "fluss", "strom", "gewässer", "nebenfluss",
-        "zufluss", "fließgewässer", "flüsse in",
-        "fluss in", "gewässer in"
-    ]
     for category in categories:
         cat_lower = category.lower()
-        if any(keyword in cat_lower for keyword in river_keywords):
+        if any(keyword in cat_lower for keyword in KEYWORDS["river_keywords"]):
             return True
 
     # Längeren Text-Auszug prüfen für bessere Erkennung
     extract_lower = extract[:300].lower()
-    river_patterns = [
-        "ist ein fluss",
-        "ist ein strom",
-        "ist ein nebenfluss",
-        "ist ein zufluss",
-        "fließt durch",
-        "mündet in",
-        "entspringt",
-        "fluss in",
-        "rechter nebenfluss",
-        "linker nebenfluss"
-    ]
 
-    if any(pattern in extract_lower for pattern in river_patterns):
+    if any(pattern in extract_lower for pattern in KEYWORDS["river_patterns"]):
         return True
 
     return False
@@ -308,7 +301,7 @@ def analyze_wikipedia_page(page, term_original):
     return result
 
 
-def getresult_for_wikipedia_term(term, expected_type=None):
+def get_result_for_wikipedia_term(term, expected_type=None):
     """
     Analysiert einen Begriff und kategorisiert ihn als Stadt, Land oder Fluss.
     Mit automatischer Disambiguierung für mehrdeutige Begriffe.
@@ -452,7 +445,7 @@ def check_answer(value, question_type, current_character):
         return False
 
     # Typ an getresult übergeben für bessere Disambiguierung
-    result = getresult_for_wikipedia_term(value, expected_type=question_type)
+    result = get_result_for_wikipedia_term(value, expected_type=question_type)
 
     # Typ prüfen
     validation_map = {
@@ -467,7 +460,3 @@ def check_answer(value, question_type, current_character):
 
     print(f'Die Antwort {RED}"{value}"{END} als "{question_type.capitalize()}" ist nicht korrekt.')
     return False
-
-
-# --- Testdaten ---
-TEST_DATA = ["Stuttgart", "Spanien", "Seine"]
