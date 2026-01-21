@@ -34,9 +34,10 @@ def show_settings():
                 break
             elif setting == 3:
                 # Sicherheitsabfrage
-                confirm = input("Bist du sicher, dass du alle Highscores löschen willst? (j/n): ").lower()
+                confirm = input(f"Bist du sicher, dass du alle Highscores löschen willst? {YELLOW}(j/n): {END}").lower()
                 if confirm == 'j':
                     data_transfer.reset_highscores()
+                break
             elif setting == 4:
                 print("Kehre zurück.")
                 break
