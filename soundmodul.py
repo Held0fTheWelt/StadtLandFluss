@@ -17,7 +17,7 @@ def play_menu_music(volume=0.02):
 
 def play_game_music(volume=0.02):
     """Spielt die Spielmusik ab"""
-    pygame.mixer.music.load("sounds/thinking.wav")
+    pygame.mixer.music.load("sounds/thinking.mp3")
     pygame.mixer.music.set_volume(volume)
     pygame.mixer.music.play(-1)
 
