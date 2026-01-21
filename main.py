@@ -24,7 +24,7 @@ def main():
     # Hauptmenü-Schleife
     while True:
         time.sleep(.5)
-        clear()
+#        clear()
         if not menu():
             # menu() gibt False zurück bei Exit
             soundmodul.stop_music()
