@@ -6,15 +6,25 @@ import settings
 
 highscore = {}  # Für lokale Anzeige (falls nötig)
 
+indent = " " * 10
 
 def show_settings():
-    print("Game Settings:")
-    print("1. Lautstärke anpassen")
-    print("2. Logs aktivieren")
-    print("3. Zurück")
+    """
+    Zeigt die Spieleinstellungen an und ermöglicht Anpassungen.
+    """
     while True:
+        print()
+        print(f"{indent}╔════════╦════════════════════════════════════╗")
+        print(f"{indent}║   #    ║           GAME SETTINGS            ║")
+        print(f"{indent}╠════════╬════════════════════════════════════╣")
+        print(f"{indent}║   1    ║ Lautstärke anpassen                ║")
+        print(f"{indent}║   2    ║ Logs aktivieren / deaktivieren     ║")
+        print(f"{indent}║   3    ║ Zurück zum Hauptmenü               ║")
+        print(f"{indent}╚════════╩════════════════════════════════════╝")
+        print()
+
         try:
-            setting = int(input("Wähle die Settings, die du ändern möchtest: "))
+            setting = int(input("➡️  Auswahl: "))
             if setting == 1:
                 backend.change_volume()
                 break

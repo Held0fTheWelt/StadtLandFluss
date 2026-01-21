@@ -28,9 +28,21 @@ def change_active_logging():
 
 
 def change_volume():
+    indent = " " * 10
+
+    print()
+    print(f"{indent}╔══════════════════════════════════════╗")
+    print(f"{indent}║        LAUTSTÄRKE EINSTELLEN         ║")
+    print(f"{indent}╠══════════════════════════════════════╣")
+    print(f"{indent}║  Erlaubter Bereich:                  ║")
+    print(f"{indent}║  0.0 = Stumm                         ║")
+    print(f"{indent}║  1.0 = Maximale Lautstärke           ║")
+    print(f"{indent}╚══════════════════════════════════════╝")
+    print()
+
     while True:
         try:
-            value = input("Gebe die Lautstärke als Wert zwischen 0 und 1 an: ")
+            value = input("Gebe die Lautstärke als Wert zwischen 0.0 und 1.0 an: ")
             volume = float(value)
 
             if 0.0 <= volume <= 1.0:
@@ -38,7 +50,7 @@ def change_volume():
                 pygame.mixer.music.set_volume(settings.volume)
                 break
             else:
-                print("Fehler: Bitte einen Wert zwischen 0 und 1 eingeben.")
+                print("Fehler: Bitte einen Wert zwischen 0.0 und 1.0 eingeben.")
         except ValueError:
             print("Fehler: Bitte eine Zahl eingeben (z.B. 0.5).")
 

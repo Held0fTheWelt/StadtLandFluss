@@ -7,11 +7,14 @@ from color import RED, GREEN, YELLOW, END
 KEYWORDS = {
     "city_keywords": [
         "stadt", "großstadt", "metropole", "hauptstadt",
-        "gemeinde", "ort in", "kreisstadt", "hansestadt"
+        "gemeinde", "ort in", "kreisstadt", "hansestadt",
+        "stadtkreis", "ort", "ortschaft"
     ],
     "country_keywords": [
         "staat in", "land in", "staat (", "mitgliedstaat",
-        "republik", "königreich", "fürstentum", "bundesstaat"
+        "republik", "königreich", "fürstentum", "bundesstaat",
+        "großherzogtum", "herzogtum", "sultanat", "emirat",
+        "kaiserreich", "kurfürstentum"
     ],
     "river_keywords": [
         "fluss", "strom", "gewässer", "nebenfluss",
@@ -82,8 +85,9 @@ def get_term_variants_by_type(term, expected_type=None):
 
     if expected_type:
         type_suffixes = {
-            "stadt": [" (Stadt)", " (Gemeinde)", " (Ort)"],
-            "land": [" (Staat)", " (Land)"],
+            "stadt": [" (Stadt)", " (Gemeinde)", " (Ort)", " (Kreisstadt)"],
+            "land": [" (Staat)", " (Land)", " (Großherzogtum)", " (Herzogtum)",
+                     " (Königreich)", " (Republik)"],
             "fluss": [" (Fluss)", " (Gewässer)", " (Strom)"]
         }
 
@@ -161,9 +165,12 @@ def detect_city(categories, extract):
         "ist die hauptstadt",
         "ist eine großstadt",
         "ist eine gemeinde",
+        "ist eine große kreisstadt",
+        "ist ein ort",
         "stadt in",
         "gemeinde in",
-        "kreisstadt"
+        "kreisstadt",
+        "große kreisstadt"
     ]
 
     if any(pattern in extract_lower for pattern in city_patterns):
@@ -186,6 +193,11 @@ def detect_country(categories, extract):
         "ist ein land",
         "ist eine republik",
         "ist ein königreich",
+        "ist ein großherzogtum",
+        "ist ein herzogtum",
+        "ist ein fürstentum",
+        "ist ein sultanat",
+        "ist ein emirat",
         "staat in",
         "land in"
     ]
