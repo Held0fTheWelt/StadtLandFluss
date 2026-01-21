@@ -1,4 +1,3 @@
-import wikipedia
 import requests
 from color import *
 
@@ -324,7 +323,8 @@ def analyze_wikipedia_page(page, term_original):
             "api_url": f"https://de.wikipedia.org/api/rest_v1/page/summary/{term_normalized}",
             "title": page.get("title", term_original),
             "description": get_description(page["extract"]),
-            "extract": page["extract"][:500] + "..." if len(page["extract"]) > 500 else page["extract"],
+            "extract": page["extract"][:500] + "..." if len(page["extract"])
+                                                        > 500 else page["extract"],
             "type": detected_type,
             "categories_detected": {
                 "is_city": is_city,
@@ -411,7 +411,8 @@ def getresult_for_wikipedia_term(term, expected_type=None):
                 # Ohne erwarteten Typ: Ersten gültigen Typ zurückgeben
                 elif result["wikipedia"]["type"] is not None:
                     print(
-                        f'{GREEN}Gefunden: "{result["wikipedia"]["title"]}" (Typ: {result["wikipedia"]["type"]}){END}')
+                        f'{GREEN}Gefunden: "{result["wikipedia"]["title"]}" '
+                        f'(Typ: {result["wikipedia"]["type"]}){END}')
                     return result
 
         # Kein passender Kandidat gefunden
@@ -431,7 +432,8 @@ def getresult_for_wikipedia_term(term, expected_type=None):
 
         # Wenn der gefundene Artikel NICHT zum erwarteten Typ passt
         if not type_map.get(expected_type.lower(), False):
-            print(f'{YELLOW}"{term_original}" passt nicht zum Typ "{expected_type}". Suche nach Varianten...{END}')
+            print(f'{YELLOW}"{term_original}" passt nicht zum Typ "{expected_type}". '
+                  f'Suche nach Varianten...{END}')
 
             # Versuche Typ-spezifische Varianten (z.B. "Fulda (Fluss)")
             variants = get_term_variants_by_type(term_original, expected_type)
@@ -451,7 +453,8 @@ def getresult_for_wikipedia_term(term, expected_type=None):
                     }
 
                     if variant_type_map.get(expected_type.lower(), False):
-                        print(f'{GREEN}Gefunden: "{variant_result["wikipedia"]["title"]}" (über Suffix-Suche){END}')
+                        print(f'{GREEN}Gefunden: "{variant_result["wikipedia"]["title"]}" '
+                              f'(über Suffix-Suche){END}')
                         return variant_result
 
             # Keine passende Variante gefunden

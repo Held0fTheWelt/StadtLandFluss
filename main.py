@@ -1,6 +1,7 @@
 import data_transfer
 from backend import *
 from ui_ux import *
+import soundmodul
 
 def main():
     """ Main function"""
@@ -10,11 +11,15 @@ def main():
     except:
         highscore = []
 
+    # Menü Musik abspielen
+    #soundmodul.play_menu_music()
+
     # Begrüßung
     greeting()
 
     # Hauptmenü-Schleife
     while True:
+
         if not menu():  # menu() gibt False zurück bei Exit
             exit_game()
             break

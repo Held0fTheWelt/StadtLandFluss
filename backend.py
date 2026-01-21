@@ -161,6 +161,7 @@ def update_highscore(result):
         print(f"{YELLOW}Warnung: Ergebnis konnte nicht zum Highscore hinzugefügt werden: {e}{END}")
         return
 
+
     # Speichern (mit Error-Handling)
     try:
         data_transfer.json_save(data_transfer.DATA, highscore)

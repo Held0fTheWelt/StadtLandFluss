@@ -1,8 +1,11 @@
-from color import*
+from color import *
+import data_transfer
+import backend
 
 highscore = {}  # Für lokale Anzeige (falls nötig)
 
 def lets_play():
+    """ Nachricht, die ausgegeben wird, wenn die Spielrunde startet"""
     print(f"Lets play: {RED}STADT{END}-{GREEN}LAND{END}-{BLUE}FLUSS{END}")
 
 
@@ -64,7 +67,6 @@ def menu():
 
     if user_choice == 1:
         # Play erst importieren, wenn benötigt → verhindert zirkuläre Abhängigkeit
-        import backend
         backend.play()
     elif user_choice == 2:
         show_highscore()
@@ -92,7 +94,7 @@ def show_highscore():
     Zeigt die Highscores an.
     Lädt sie aus daten.json, falls vorhanden.
     """
-    import data_transfer
+
     highscores = data_transfer.json_load(data_transfer.DATA)
 
     print(
