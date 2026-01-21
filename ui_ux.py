@@ -9,15 +9,23 @@ highscore = {}  # Für lokale Anzeige (falls nötig)
 
 def show_settings():
     print("1. Lautstärke anpassen")
-
+    print("2. Logs aktivieren")
+    print("3. Zurück")
     while True:
         try:
             setting = int(input("Wähle die Settings, die du ändern möchtest: "))
             if setting == 1:
                 backend.change_volume()
+                break
+            elif setting == 2:
+                backend.change_active_logging()
+                break
+            elif setting == 3:
+                print("Kehre zurück.")
+                break
             else:
-                print("Ungültige Auswahl. Nur 1 ist verfügbar.")
-            break
+                print("Ungültige Auswahl. Kehre zurück.")
+                break
         except ValueError:
             print("Fehler: Bitte eine Zahl eingeben (z.B. 1).")
 
@@ -89,6 +97,7 @@ def menu():
             "\t" + GREEN + "5." + END + " ❌ EXIT\n"
         ))
     except ValueError:
+        print()
         print("Ungültige Eingabe. Bitte Zahl 1-4 eingeben.")
         return True
     print()

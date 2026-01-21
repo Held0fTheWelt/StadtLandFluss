@@ -10,6 +10,23 @@ import pygame
 
 TIME_FOR_BONUS = 30
 
+
+def change_active_logging():
+    while True:
+        value = input("Aktiviere Logging (j/n): ").strip().lower()
+
+        if value == "j":
+            settings.logging = True
+            print("Logging aktiviert.")
+            break
+        elif value == "n":
+            settings.logging = False
+            print("Logging deaktiviert.")
+            break
+        else:
+            print("Fehler: Bitte 'j' oder 'n' eingeben.")
+
+
 def change_volume():
     while True:
         try:
@@ -38,7 +55,7 @@ def play():
     """
     Spielt eine Runde Stadt Land Fluss und ruft die Auswertung auf
     """
-    random_character = get_random_character()
+    random_character = "s" # get_random_character()
     print(f"Der aktuelle Buchstabe ist: {BLUE}{random_character}{END}\n")
 
     startzeit = time.time()  # startzeit

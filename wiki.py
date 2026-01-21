@@ -1,4 +1,4 @@
-
+import settings
 import requests
 from color import RED, GREEN, YELLOW, END
 
@@ -433,8 +433,9 @@ def getresult_for_wikipedia_term(term, expected_type=None):
 
         # Wenn der gefundene Artikel NICHT zum erwarteten Typ passt
         if not type_map.get(expected_type.lower(), False):
-            print(f'{YELLOW}"{term_original}" passt nicht zum Typ "{expected_type}". '
-                  f'Suche nach Varianten...{END}')
+            if settings.logging:
+                print(f'{YELLOW}"{term_original}" passt nicht zum Typ "{expected_type}". '
+                      f'Suche nach Varianten...{END}')
 
             # Versuche Typ-spezifische Varianten (z.B. "Fulda (Fluss)")
             variants = get_term_variants_by_type(term_original, expected_type)
@@ -458,7 +459,8 @@ def getresult_for_wikipedia_term(term, expected_type=None):
                         return variant_result
 
             # Keine passende Variante gefunden
-            print(f'{RED}Keine passende "{expected_type}"-Variante für "{term_original}" gefunden{END}')
+            if settings.logging:
+                print(f'{RED}Keine passende "{expected_type}"-Variante für "{term_original}" gefunden{END}')
             return create_not_found_result(term_original)
 
     # Typ passt oder kein expected_type angegeben

@@ -3,7 +3,7 @@ from backend import *
 from ui_ux import *
 import soundmodul
 import settings
-
+import time
 def main():
     """
     Hauptfunktion für Spieleablauf
@@ -20,13 +20,14 @@ def main():
 
     # Hauptmenü-Schleife
     while True:
-
+        time.sleep(.5)
         if not menu():
             # menu() gibt False zurück bei Exit
             soundmodul.stop_music()
             exit_game()
             break
 
+        print()
     # Am Ende ggf. Highscore speichern (falls noch nötig)
     data_transfer.json_save(data_transfer.DATA, highscore)
 

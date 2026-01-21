@@ -50,4 +50,11 @@ def test_all_caps_answers():
 def test_no_caps_answers():
     assert wiki.check_answer("passau", "stadt", "p") == True, "Der Buchstabe wird nicht richtig geprüft"
 
+def test_Schweden_als_Stadt():
+    assert wiki.check_answer("Schweden", "stadt", "s") == False, "Schweden ist keine Stadt"
+
+def test_Stuttgart_als_Land():
+    assert wiki.check_answer("Stuttgart", "land", "s") == False, "Schweden ist keine Stadt"
+
+
 pytest.main()
