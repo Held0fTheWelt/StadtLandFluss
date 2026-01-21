@@ -8,6 +8,7 @@ highscore = {}  # Für lokale Anzeige (falls nötig)
 
 
 def show_settings():
+    print("Game Settings:")
     print("1. Lautstärke anpassen")
     print("2. Logs aktivieren")
     print("3. Zurück")
