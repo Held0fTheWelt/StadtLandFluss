@@ -55,7 +55,7 @@ def play():
     """
     Spielt eine Runde Stadt Land Fluss und ruft die Auswertung auf
     """
-    #random_character = "s"
+    #random_character = "s"  # Testfall "s"
     random_character = get_random_character()
     print(f"Der aktuelle Buchstabe ist: {BLUE}{random_character}{END}\n")
 
