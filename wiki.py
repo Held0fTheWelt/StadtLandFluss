@@ -13,12 +13,12 @@ KEYWORDS = {
         "staat in", "land in", "staat (", "mitgliedstaat",
         "republik", "königreich", "fürstentum", "bundesstaat"
     ],
-    "river_keywords" : [
-            "fluss", "strom", "gewässer", "nebenfluss",
-            "zufluss", "fließgewässer", "flüsse in",
-            "fluss in", "gewässer in"
+    "river_keywords": [
+        "fluss", "strom", "gewässer", "nebenfluss",
+        "zufluss", "fließgewässer", "flüsse in",
+        "fluss in", "gewässer in"
     ],
-    "river_patterns" : [
+    "river_patterns": [
         "ist ein fluss", "ist ein strom", "ist ein nebenfluss",
         "ist ein zufluss", "fließt durch", "mündet in",
         "entspringt", "fluss in", "rechter nebenfluss",
@@ -34,6 +34,7 @@ question_types = ["stadt", "land", "fluss"]
 def if_exists_in_wiki(term: str) -> bool:
     """
     Es prüft, ob ein Wort (term) auf Wikipedia existiert.
+    Gibt False zurück bei Netzwerkfehlern.
     """
     url = "https://de.wikipedia.org/w/api.php"
     parameter = {
@@ -47,10 +48,26 @@ def if_exists_in_wiki(term: str) -> bool:
         "User-Agent": "StadtLandFlussGame/1.0 (https://example.com)"
     }
 
-    response = requests.get(url, params=parameter, headers=headers)
-    response.raise_for_status()  # wirft Fehler, falls HTTP-Fehler
-    data = response.json()
-    return bool(data[1])
+    try:
+        response = requests.get(url, params=parameter, headers=headers, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        return bool(data[1])
+    except requests.exceptions.ConnectionError:
+        print(f'{RED}Fehler: Keine Verbindung zu Wikipedia möglich{END}')
+        return False
+    except requests.exceptions.Timeout:
+        print(f'{RED}Fehler: Wikipedia-Anfrage hat zu lange gedauert (Timeout){END}')
+        return False
+    except requests.exceptions.HTTPError as e:
+        print(f'{RED}Fehler: Wikipedia-Server-Fehler: {e}{END}')
+        return False
+    except requests.exceptions.RequestException as e:
+        print(f'{RED}Fehler bei Wikipedia-Anfrage: {e}{END}')
+        return False
+    except Exception as e:
+        print(f'{RED}Unerwarteter Fehler: {e}{END}')
+        return False
 
 
 def get_term_variants_by_type(term, expected_type=None):
@@ -95,12 +112,20 @@ def get_disambiguation_candidates(term):
     }
 
     try:
-        response = requests.get(url, params=params, headers=headers)
+        response = requests.get(url, params=params, headers=headers, timeout=10)
         response.raise_for_status()
         data = response.json()
         # data[1] enthält die Titel der gefundenen Artikel
         return data[1] if len(data) > 1 else []
-    except:
+    except requests.exceptions.ConnectionError:
+        print(f'{YELLOW}Warnung: Keine Verbindung für Disambiguierung{END}')
+        return []
+    except requests.exceptions.Timeout:
+        print(f'{YELLOW}Warnung: Timeout bei Disambiguierung{END}')
+        return []
+    except requests.exceptions.RequestException:
+        return []
+    except Exception:
         return []
 
 
@@ -222,6 +247,7 @@ def create_not_found_result(term):
 def get_wikipedia_page_data(term_normalized):
     """
     Holt die Rohdaten einer Wikipedia-Seite.
+    Gibt None zurück bei Netzwerkfehlern.
     """
     url = "https://de.wikipedia.org/w/api.php"
     params = {
@@ -237,15 +263,31 @@ def get_wikipedia_page_data(term_normalized):
         "User-Agent": "StadtLandFlussGame/1.0 (https://example.com)"
     }
 
-    response = requests.get(url, params=params, headers=headers)
-    if response.status_code != 200:
+    try:
+        response = requests.get(url, params=params, headers=headers, timeout=10)
+        if response.status_code != 200:
+            return None
+
+        data = response.json()
+        pages = data["query"]["pages"]
+        page = next(iter(pages.values()))
+
+        return page
+    except requests.exceptions.ConnectionError:
+        print(f'{RED}Fehler: Keine Verbindung zu Wikipedia möglich{END}')
         return None
-
-    data = response.json()
-    pages = data["query"]["pages"]
-    page = next(iter(pages.values()))
-
-    return page
+    except requests.exceptions.Timeout:
+        print(f'{RED}Fehler: Wikipedia-Anfrage hat zu lange gedauert (Timeout){END}')
+        return None
+    except requests.exceptions.HTTPError as e:
+        print(f'{YELLOW}Warnung: Wikipedia-Server-Fehler: {e}{END}')
+        return None
+    except requests.exceptions.RequestException as e:
+        print(f'{YELLOW}Warnung: Wikipedia-Anfrage fehlgeschlagen: {e}{END}')
+        return None
+    except Exception as e:
+        print(f'{YELLOW}Warnung: Fehler beim Verarbeiten der Wikipedia-Daten: {e}{END}')
+        return None
 
 
 def analyze_wikipedia_page(page, term_original):
@@ -301,7 +343,7 @@ def analyze_wikipedia_page(page, term_original):
     return result
 
 
-def get_result_for_wikipedia_term(term, expected_type=None):
+def getresult_for_wikipedia_term(term, expected_type=None):
     """
     Analysiert einen Begriff und kategorisiert ihn als Stadt, Land oder Fluss.
     Mit automatischer Disambiguierung für mehrdeutige Begriffe.
@@ -427,6 +469,8 @@ def check_answer(value, question_type, current_character):
     - Beginnt das Wort mit dem richtigen Buchstaben
     - Existiert es auf Wikipedia
     - Ist der Typ korrekt (stadt/land/fluss)
+
+    Bei Netzwerkfehlern gibt die Funktion False zurück und zeigt eine Fehlermeldung.
     """
     # ist etwas eingegeben?
     if not value:
@@ -445,7 +489,7 @@ def check_answer(value, question_type, current_character):
         return False
 
     # Typ an getresult übergeben für bessere Disambiguierung
-    result = get_result_for_wikipedia_term(value, expected_type=question_type)
+    result = getresult_for_wikipedia_term(value, expected_type=question_type)
 
     # Typ prüfen
     validation_map = {

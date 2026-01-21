@@ -22,29 +22,57 @@ def play():
 
     startzeit = time.time()  # startzeit
 
-    # Eingaben vom User
-    stadt = ui_ux.get_input("Stadt")
-    land = ui_ux.get_input("Land")
-    fluss = ui_ux.get_input("Fluss")
+    # Eingaben vom User (mit Error-Handling für Abbruch)
+    try:
+        stadt = ui_ux.get_input("Stadt")
+        land = ui_ux.get_input("Land")
+        fluss = ui_ux.get_input("Fluss")
+    except KeyboardInterrupt:
+        print(f"\n\n{YELLOW}Spiel wurde abgebrochen.{END}")
+        return None
+    except EOFError:
+        print(f"\n\n{RED}Eingabe-Fehler. Spiel wird beendet.{END}")
+        return None
+    except Exception as e:
+        print(f"\n\n{RED}Unerwarteter Fehler bei der Eingabe: {e}{END}")
+        return None
 
     endzeit = time.time()  # endzeit
 
     result = {}
     result["Zeit"] = endzeit - startzeit
     print("\nGutes Spiel! Danke!")
-    print(f'Du hast{BLUE} {result["Zeit"]:.2f} {END}Sekunden gebraucht.\n') # f-string korrigiert
+    print(f'Du hast{BLUE} {result["Zeit"]:.2f} {END}Sekunden gebraucht.\n')
 
-    # Auswertung
-    get_result(result, stadt, land, fluss, random_character)
+    # Auswertung (mit Error-Handling)
+    try:
+        get_result(result, stadt, land, fluss, random_character)
+    except Exception as e:
+        print(f"{RED}Fehler bei der Auswertung: {e}{END}")
+        result["Punkte"] = 0  # Fallback
 
-    # Name des Spielers abfragen
-    result["Name"] = get_player_name()
+    # Name des Spielers abfragen (mit Error-Handling)
+    try:
+        result["Name"] = get_player_name()
+    except KeyboardInterrupt:
+        print(f"\n{YELLOW}Namenseingabe abgebrochen. Verwende Standardname.{END}")
+        result["Name"] = "Unbekannt"
+    except EOFError:
+        print(f"\n{RED}Eingabe-Fehler. Verwende Standardname.{END}")
+        result["Name"] = "Unbekannt"
+    except Exception as e:
+        print(f"\n{RED}Fehler bei Namenseingabe: {e}. Verwende Standardname.{END}")
+        result["Name"] = "Unbekannt"
+
     result["ABC"] = random_character
 
-    print(f'{result["Name"]}, du hast {YELLOW}{result["Punkte"]}{END} Punkte!')
+    print(f'{result["Name"]}, du hast {YELLOW}{result["Punkte"]:.2f}{END} Punkte!')
 
-    # Highscore aktualisieren
-    update_highscore(result)
+    # Highscore aktualisieren (mit Error-Handling)
+    try:
+        update_highscore(result)
+    except Exception as e:
+        print(f"{YELLOW}Warnung: Highscore konnte nicht gespeichert werden: {e}{END}")
 
     return result
 
@@ -53,37 +81,93 @@ def get_result(result, stadt, land, fluss, buchstabe):
     """ Berechnet das Ergebnis und zeigt es an """
     result["Punkte"] = 0
 
-    # check_answer für jede Kategorie
-    if check_answer(stadt, "stadt", buchstabe):
-        result["Punkte"] += 5
-    if check_answer(land, "land", buchstabe):
-        result["Punkte"] += 5
-    if check_answer(fluss, "fluss", buchstabe):
-        result["Punkte"] += 5
+    # check_answer für jede Kategorie (bereits mit Error-Handling in wiki.py)
+    try:
+        if check_answer(stadt, "stadt", buchstabe):
+            result["Punkte"] += 5
+    except Exception as e:
+        print(f"{YELLOW}Warnung: Stadt konnte nicht geprüft werden: {e}{END}")
 
-    bonuszeit = max(0, TIME_FOR_BONUS - result["Zeit"])
-    result["Punkte"] = result["Punkte"] * (1 + (bonuszeit / 100)) # Zinseszins formel
+    try:
+        if check_answer(land, "land", buchstabe):
+            result["Punkte"] += 5
+    except Exception as e:
+        print(f"{YELLOW}Warnung: Land konnte nicht geprüft werden: {e}{END}")
+
+    try:
+        if check_answer(fluss, "fluss", buchstabe):
+            result["Punkte"] += 5
+    except Exception as e:
+        print(f"{YELLOW}Warnung: Fluss konnte nicht geprüft werden: {e}{END}")
+
+    # Bonuszeit berechnen (mit Validierung)
+    try:
+        bonuszeit = max(0, TIME_FOR_BONUS - result["Zeit"])
+        result["Punkte"] = result["Punkte"] * (1 + (bonuszeit / 100))  # Zinseszins formel
+    except Exception as e:
+        print(f"{YELLOW}Warnung: Bonusberechnung fehlgeschlagen: {e}{END}")
+        # Punkte bleiben wie sie sind, ohne Bonus
 
 
 def get_player_name():
     """Erfragt den Namen der Person"""
-    player_name = input(f"\nGib bitte deinen {YELLOW}Namen{END} ein! ")
-    return player_name
+    while True:
+        try:
+            player_name = input(f"\nGib bitte deinen {YELLOW}Namen{END} ein! ")
+
+            # Validierung: Name darf nicht leer sein
+            if not player_name or player_name.strip() == "":
+                print(f"{RED}Name darf nicht leer sein! Bitte erneut versuchen.{END}")
+                continue
+
+            # Validierung: Name sollte nicht zu lang sein
+            if len(player_name) > 50:
+                print(f"{RED}Name ist zu lang (max. 50 Zeichen)! Bitte erneut versuchen.{END}")
+                continue
+
+            return player_name.strip()
+
+        except KeyboardInterrupt:
+            raise  # Wird in play() abgefangen
+        except EOFError:
+            raise  # Wird in play() abgefangen
+        except Exception as e:
+            print(f"{RED}Fehler bei der Eingabe: {e}{END}")
+            raise
 
 
 def update_highscore(result):
-    """Zeigt den neuen Highscore an"""
+    """Zeigt den neuen Highscore an und speichert ihn"""
     try:
         highscore = data_transfer.json_load(data_transfer.DATA)
-    except (FileNotFoundError, json.JSONDecodeError):
+    except FileNotFoundError:
+        print(f"{YELLOW}Info: Noch keine Highscore-Datei vorhanden. Erstelle neue.{END}")
+        highscore = []
+    except json.JSONDecodeError:
+        print(f"{YELLOW}Warnung: Highscore-Datei ist beschädigt. Erstelle neue.{END}")
+        highscore = []
+    except Exception as e:
+        print(f"{YELLOW}Warnung: Fehler beim Laden des Highscores: {e}. Erstelle neue Liste.{END}")
         highscore = []
 
-    # Neues Ergebnis hinzufügen
-    highscore.append({
-        "Name": result["Name"],
-        "Punkte": result["Punkte"],
-        "Zeit": result["Zeit"],
-    })
+    # Neues Ergebnis hinzufügen (mit Validierung)
+    try:
+        highscore.append({
+            "Name": result.get("Name", "Unbekannt"),
+            "Punkte": float(result.get("Punkte", 0)),
+            "Zeit": float(result.get("Zeit", 0)),
+        })
+    except Exception as e:
+        print(f"{YELLOW}Warnung: Ergebnis konnte nicht zum Highscore hinzugefügt werden: {e}{END}")
+        return
 
-    # Speichern
-    # data_transfer.json_save(data_transfer.DATA, highscore)
+    # Speichern (mit Error-Handling)
+    try:
+        data_transfer.json_save(data_transfer.DATA, highscore)
+        print(f"{GREEN}Highscore erfolgreich gespeichert!{END}")
+    except PermissionError:
+        print(f"{RED}Fehler: Keine Berechtigung zum Speichern der Highscore-Datei{END}")
+    except OSError as e:
+        print(f"{RED}Fehler: Highscore konnte nicht gespeichert werden: {e}{END}")
+    except Exception as e:
+        print(f"{RED}Unerwarteter Fehler beim Speichern: {e}{END}")
