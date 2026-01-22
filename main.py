@@ -31,10 +31,6 @@ def main():
             exit_game()
             break
 
-
-    # Am Ende ggf. Highscore speichern (falls noch nötig)
-    data_transfer.json_save(data_transfer.DATA, highscore)
-
     soundmodul.stop_music()
 
 if __name__ == "__main__":
